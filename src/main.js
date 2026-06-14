@@ -36,6 +36,7 @@ const ST = { MENU:0, PLAY:1, PAUSE:2, LEVELUP:3, OVER:4, WIN:5 };
 let state = ST.MENU;
 let G = null;        // current run
 let shakeT = 0, shakeMag = 0;
+const devTools = { open:false, godmode:false, speed:1 };
 
 /* ---------------- Input ---------------- */
 const keys = {};
@@ -44,6 +45,11 @@ addEventListener('keydown', e=>{
   unlockAudio();
   const k = e.key.toLowerCase();
   keys[k] = true;
+  if(e.key === 'PageUp'){
+    toggleDevTools();
+    e.preventDefault();
+    return;
+  }
   if(k==='escape'){
     if(state===ST.PLAY){
       openScreen('pause');
@@ -65,6 +71,83 @@ const $ = id=>document.getElementById(id);
 function closeScreens(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show')); }
 function openScreen(id){ closeScreens(); $(id).classList.add('show'); }
 function showHUD(b){ $('hud').classList.toggle('show', b); }
+
+function isAdminUser(){
+  try { return localStorage.getItem('grukk_session') === 'admin'; }
+  catch (_) { return false; }
+}
+
+function syncDevToolsPanel(){
+  const panel = $('devtools');
+  if(!panel) return;
+  panel.classList.toggle('show', devTools.open && isAdminUser());
+  panel.setAttribute('aria-hidden', panel.classList.contains('show') ? 'false' : 'true');
+  const god = $('devGodmode');
+  if(god){
+    god.textContent = 'Godmode: ' + (devTools.godmode ? 'on' : 'off');
+    god.classList.toggle('on', devTools.godmode);
+  }
+  const speed = $('devSpeed');
+  const speedValue = $('devSpeedValue');
+  if(speed && Number(speed.value) !== devTools.speed) speed.value = String(devTools.speed);
+  if(speedValue) speedValue.textContent = devTools.speed.toFixed(1) + 'x';
+}
+
+function toggleDevTools(){
+  if(!isAdminUser()) return;
+  devTools.open = !devTools.open;
+  syncDevToolsPanel();
+}
+
+function devLevelUp(){
+  if(!G || state===ST.MENU || typeof queueLevelUp !== 'function') return;
+  queueLevelUp();
+  if(state===ST.PLAY && G.pendingLevels>0 && G.lvlAnim<=0 && typeof openPowerupSelection === 'function') openPowerupSelection();
+}
+
+function devFullHeal(){
+  if(!G || !G.player) return;
+  G.player.hp = G.player.maxhp;
+  ftext(G.player.x, G.player.y-G.player.r-18, 'FULL HEAL', '#5ee06a', 15, 0.9);
+}
+
+function devClearMobs(){
+  if(!G) return;
+  G.enemies.length = 0;
+  G.boss = null;
+  const bb = $('bossbar');
+  if(bb) bb.style.display = 'none';
+}
+
+function devNextWave(){
+  if(!G || state===ST.MENU) return;
+  G.enemies.length = 0;
+  G.boss = null;
+  G.toSpawn = 0;
+  G.waveState = 'inter';
+  G.interT = 0.2;
+}
+
+function bindDevTools(){
+  const close = $('devClose');
+  if(close) close.onclick = ()=>{ devTools.open=false; syncDevToolsPanel(); };
+  const level = $('devLevelUp');
+  if(level) level.onclick = devLevelUp;
+  const heal = $('devFullHeal');
+  if(heal) heal.onclick = devFullHeal;
+  const clear = $('devClearMobs');
+  if(clear) clear.onclick = devClearMobs;
+  const next = $('devNextWave');
+  if(next) next.onclick = devNextWave;
+  const god = $('devGodmode');
+  if(god) god.onclick = ()=>{ devTools.godmode = !devTools.godmode; syncDevToolsPanel(); };
+  const speed = $('devSpeed');
+  if(speed) speed.oninput = ()=>{
+    devTools.speed = clamp(Number(speed.value) || 1, 1, 10);
+    syncDevToolsPanel();
+  };
+  syncDevToolsPanel();
+}
 
 const ABILITY_INFO = {
   abQ:{nm:'Battle Fury', key:'Q',

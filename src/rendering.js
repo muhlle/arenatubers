@@ -1954,7 +1954,8 @@ function loop(now){
   const dt = Math.min((now - lastT) / 1000, 0.1);
   lastT = now;
   if(state === ST.PLAY || state === ST.OVER || state === ST.WIN){
-    update(dt);
+    const speed = typeof devTools !== 'undefined' ? devTools.speed : 1;
+    update(dt * speed);
   }
   draw();
   if(state === ST.PLAY) updateHUD();
@@ -1964,6 +1965,7 @@ function boot(){
   resize();
   window.addEventListener('resize', resize);
   bindAbilityTooltips();
+  if(typeof bindDevTools === 'function') bindDevTools();
   if(typeof updateAbilityIcons === 'function') updateAbilityIcons(typeof selectedChar !== 'undefined' ? selectedChar : 'skeleton');
 
   $('btnPlay').onclick    = ()=>{ unlockAudio(); openCharSelect(); };

@@ -240,6 +240,7 @@ function explode(x,y,rad,dmg,hurtPlayer){
 }
 function damagePlayer(dmg, source){
   const p = G.player;
+  if(typeof devTools !== 'undefined' && devTools.godmode) return;
   if(p.iframes>0 || p.dash.active>0) return;
   const armorPct = (p.armor || 0) + (p.itemStats.guard || 0);
   dmg *= 1 - Math.min(armorPct, 0.40);
