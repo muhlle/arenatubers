@@ -33,7 +33,7 @@ function stickmanInitPlayer(p, cdr){
   p.hp      = p.maxhp;
   p.cdr     = cdr;
   // Fists of Fury state
-  p.fof   = { active:0, cd:0, cdMax:STICK.fofCd*cdr, tick:0, flash:0, hits:0 };
+  p.fof   = { active:0, cd:0, cdMax:STICK.fofCd*cdr, tick:0, flash:0, hits:0, waves:[] };
   // Speed Burst (own dash field so the generic charge handler stays off)
   p.burst = { active:0, cd:0, cdMax:STICK.burstCd*cdr, dx:0, dy:0, ang:0 };
   // animation helpers
@@ -51,6 +51,10 @@ function updateStickmanAbilities(dt){
   if(p.fof)   p.fof.cd   -= dt;
   if(p.burst) p.burst.cd -= dt;
   if(p.fof && p.fof.flash>0) p.fof.flash = Math.max(0, p.fof.flash - dt*5);
+  if(p.fof && p.fof.waves){
+    for(const w of p.fof.waves) w.life -= dt;
+    p.fof.waves = p.fof.waves.filter(w=>w.life>0);
+  }
 
   // Movement amount (drives leg animation) — smoothed from actual displacement
   const moved = Math.hypot(p.x - p._lx, p.y - p._ly);
@@ -98,6 +102,7 @@ function updateStickmanAbilities(dt){
       p.fof.active = STICK.fofDur;
       p.fof.tick   = 0;
       p.fof.hits   = 0;
+      p.fof.waves.length = 0;
       ftext(p.x,p.y-50,'FISTS OF FURY','#8fe6ff',16,0.7);
     }
     if(p.fof.active>0){
@@ -135,6 +140,16 @@ function fofConeHit(p){
   }
   p.fof.flash = 1;
   p.fof.hits++;
+  if(p.fof.waves){
+    p.fof.waves.push({
+      a:p.facing,
+      side:p.fof.hits%2===0 ? 1 : -1,
+      life:0.34,
+      maxLife:0.34,
+      range:range
+    });
+    if(p.fof.waves.length>8) p.fof.waves.splice(0, p.fof.waves.length-8);
+  }
   // forward fist puff in aim direction
   const fx = p.x + Math.cos(p.facing)*42;
   const fy = p.y + Math.sin(p.facing)*42;
@@ -231,33 +246,38 @@ function drawStickman(p){
     ctx.restore();
   }
 
-  function reachPushWind(alpha){
-    const rng = STICK.fofRange * (p.reach || 1);
+  function reachPushWaves(){
+    const waves = p.fof && p.fof.waves ? p.fof.waves : [];
+    if(!waves.length) return;
     ctx.save();
     ctx.translate(lean, -bob);
-    ctx.rotate(p.facing);
     ctx.globalCompositeOperation='lighter';
-    ctx.globalAlpha=alpha;
     ctx.filter='blur(6px)';
-    const pulse = 0.78 + Math.sin(t*24)*0.12 + p.fof.flash*0.18;
-    for(let i=0;i<4;i++){
-      const y = (i-1.5)*9 + Math.sin(t*18+i)*2.4;
-      const x0 = 24 + i*5;
-      const x1 = rng*(0.62 + i*0.07);
-      const w0 = 9 + i*1.5;
-      const w1 = 25 - i*2;
+    for(const wave of waves){
+      const prog = 1 - wave.life / wave.maxLife;
+      const ease = 1 - Math.pow(1-prog, 2);
+      const alpha = 0.5 * (1-prog);
+      const x0 = 22 + wave.range*0.12*ease;
+      const x1 = 45 + wave.range*(0.48 + 0.42*ease);
+      const y = wave.side * (8 + 9*prog) + Math.sin(t*20 + wave.side)*2;
+      const w0 = 7 + 12*prog;
+      const w1 = 16 + 24*prog;
+      ctx.save();
+      ctx.rotate(wave.a);
+      ctx.globalAlpha = alpha;
       const grad = ctx.createLinearGradient(x0, y, x1, y);
       grad.addColorStop(0, 'rgba(95,210,255,0)');
-      grad.addColorStop(0.25, 'rgba(95,210,255,0.34)');
-      grad.addColorStop(0.72, 'rgba(170,245,255,0.50)');
+      grad.addColorStop(0.34, 'rgba(95,210,255,0.26)');
+      grad.addColorStop(0.68, 'rgba(170,245,255,0.50)');
       grad.addColorStop(1, 'rgba(95,210,255,0)');
       ctx.fillStyle=grad;
       ctx.beginPath();
       ctx.moveTo(x0, y-w0);
-      ctx.bezierCurveTo(rng*0.25, y-w0*1.4, rng*0.52, y-w1*pulse, x1, y-w0*0.25);
-      ctx.bezierCurveTo(rng*0.58, y+w1*pulse, rng*0.28, y+w0*1.35, x0, y+w0);
+      ctx.bezierCurveTo(x0+(x1-x0)*0.25, y-w0*1.8, x0+(x1-x0)*0.72, y-w1, x1, y-w0*0.2);
+      ctx.bezierCurveTo(x0+(x1-x0)*0.76, y+w1, x0+(x1-x0)*0.28, y+w0*1.55, x0, y+w0);
       ctx.closePath();
       ctx.fill();
+      ctx.restore();
     }
     ctx.filter='none';
     ctx.restore();
@@ -429,7 +449,7 @@ function drawStickman(p){
   if(p.iframes>0 && Math.floor(t*16)%2===0) ctx.globalAlpha=0.55;
   paint(1, null);
   ctx.globalAlpha=1;
-  if(flurry) reachPushWind(0.5);
+  reachPushWaves();
   lightningEdge(flurry ? 0.92 : 0.42);
 
   ctx.restore();
@@ -504,21 +524,22 @@ function _previewStickman(c, t){
     c.save();
     c.translate(0, shY+6);
     c.globalCompositeOperation='lighter';
-    c.globalAlpha=0.38;
     c.filter='blur(5px)';
     for(let i=0;i<3;i++){
-      const y=(i-1)*7+Math.sin(t*18+i)*2;
-      const x0=24+i*4, x1=82+i*12, w0=7+i, w1=18-i*2;
+      const prog=(t*2.6+i*0.33)%1;
+      c.globalAlpha=0.42*(1-prog);
+      const y=(i-1)*8 + prog*13 + Math.sin(t*18+i)*2;
+      const x0=22+prog*10, x1=58+prog*54, w0=7+prog*10, w1=13+prog*17;
       const pg=c.createLinearGradient(x0,y,x1,y);
       pg.addColorStop(0,'rgba(95,210,255,0)');
-      pg.addColorStop(0.35,'rgba(95,210,255,0.28)');
+      pg.addColorStop(0.35,'rgba(95,210,255,0.24)');
       pg.addColorStop(0.76,'rgba(180,248,255,0.50)');
       pg.addColorStop(1,'rgba(95,210,255,0)');
       c.fillStyle=pg;
       c.beginPath();
       c.moveTo(x0,y-w0);
-      c.bezierCurveTo(40,y-w0*1.4,62,y-w1,x1,y-w0*0.25);
-      c.bezierCurveTo(66,y+w1,40,y+w0*1.35,x0,y+w0);
+      c.bezierCurveTo(x0+18,y-w0*1.7,x0+48,y-w1,x1,y-w0*0.25);
+      c.bezierCurveTo(x0+54,y+w1,x0+20,y+w0*1.45,x0,y+w0);
       c.closePath(); c.fill();
     }
     c.filter='none';
