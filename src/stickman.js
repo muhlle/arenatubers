@@ -28,6 +28,7 @@ function stickmanInitPlayer(p, cdr){
   p.maxhp   = Math.round(105*(1+0.15*tval('vita')));
   p.speed   = 248*(1+0.08*tval('swft'));
   p.baseDmg = 13;
+  p.baseDmgBase = p.baseDmg;
   p.armor   = 0.06;
   p.r       = 22;
   p.hp      = p.maxhp;

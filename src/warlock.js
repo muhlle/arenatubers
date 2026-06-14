@@ -425,6 +425,7 @@ function warlockInitPlayer(p, cdr){
   p.maxhp   = Math.round(85*(1+0.15*tval('vita')));
   p.speed   = 235*(1+0.08*tval('swft'));
   p.baseDmg = 10;
+  p.baseDmgBase = p.baseDmg;
   p.armor   = 0.05;
   p.r       = 21;
   p.hp      = p.maxhp;

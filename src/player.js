@@ -2,6 +2,8 @@
 /* =========================================================
    COMBAT
 ========================================================= */
+const CRIT_DAMAGE_MULT = 1.4;
+
 function playerSwing(){
   const p = G.player;
   if(p.swing || p.swingCd>0 || p.ww.active>0 || p.slam.wind>0) return;
@@ -35,12 +37,13 @@ function doSwingDamage(sw){
   for(const {e} of targets){
     const crit = Math.random()<p.crit;
     if(crit) playSfx('bladeCrit', 0.85);
-    hitEnemy(e, dmgBase*(crit?2:1)*rand(0.92,1.08), crit, sw.dir, sw.cleave?260:140, 'physical', sw.cleave?'skeleton.cleave':'skeleton.slash');
+    hitEnemy(e, dmgBase*rand(0.92,1.08), crit, sw.dir, sw.cleave?260:140, 'physical', sw.cleave?'skeleton.cleave':'skeleton.slash');
     triggerWeaponItems(e, sw, crit);
   }
   shake(sw.cleave?3:2, 0.08);
 }
 function hitEnemy(e, dmg, crit, dir, kb, dmgType, source){
+  if(crit) dmg *= CRIT_DAMAGE_MULT;
   dmg = Math.round(dmg);
   if(typeof runLogDamageDone === 'function') runLogDamageDone(e, dmg, crit, dmgType, source || 'unknown');
   e.hp -= dmg; e.hitFlash = 0.12;

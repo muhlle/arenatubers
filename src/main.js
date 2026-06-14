@@ -482,7 +482,8 @@ function updateItemsHUD(){
   const sv = $('statview');
   if(sv){
     const baseMove = 250;
-    const dmg   = Math.round((p.dmgMul - 1)*100);
+    const baseDmgMul = p.baseDmgBase ? (p.baseDmg / p.baseDmgBase) : 1;
+    const dmg   = Math.round((baseDmgMul * p.dmgMul - 1)*100);
     const spd   = Math.round((p.atkSpd - 1)*100);
     const reach = Math.round((p.reach  - 1)*100);
     const crit  = Math.round(p.crit*100);
