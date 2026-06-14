@@ -213,6 +213,10 @@
   .talent .ds{font-size:12px;color:#9a8fb8;margin:7px 0;line-height:1.5}
   .talent .rk{font-size:12px;color:#cbb8ff;font-weight:bold}
   .talent .cost{font-size:12px;color:var(--void);font-weight:bold;margin-top:5px}
+  .talent-actions{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:-4px 0 10px}
+  .reset-talents{border-color:#6d3f75!important;color:#f0d5ff!important;background:linear-gradient(#2a1831,#15101b)!important}
+  .reset-talents.disabled{opacity:.38;pointer-events:none;filter:grayscale(.4)}
+  .talent-refund{font-size:12px;color:#a996c8;letter-spacing:1px;text-transform:uppercase}
   .hint{color:#8d8270;font-size:13px;margin-top:6px;line-height:1.6}
   #gameover .stats, #victory .stats{margin:0 0 10px;font-size:14px;color:#cabfa4;line-height:1.65;text-align:left;letter-spacing:1px}
   #gameover .stats b, #victory .stats b{color:var(--gold);font-family:Impact;font-size:22px;letter-spacing:1px}

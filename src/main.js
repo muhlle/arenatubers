@@ -386,6 +386,11 @@ function toMenu(){
 
 function renderTalents(){
   $('talentCores').textContent = `◆ ${meta.voidcores} VOIDCORES`;
+  const refund = talentRefundValue();
+  const refundEl = $('talentRefund');
+  if(refundEl) refundEl.textContent = `Refund: ${refund} Voidcore${refund===1?'':'s'}`;
+  const resetBtn = $('btnResetTalents');
+  if(resetBtn) resetBtn.classList.toggle('disabled', refund<=0);
   const grid = $('tgrid'); grid.innerHTML='';
   TALENTS.forEach(t=>{
     const rk = talentRanks[t.id];
@@ -402,6 +407,20 @@ function renderTalents(){
     };
     grid.appendChild(d);
   });
+}
+
+function talentRefundValue(){
+  return TALENTS.reduce((sum, t)=>sum + (talentRanks[t.id] || 0) * t.cost, 0);
+}
+
+function resetTalents(){
+  const refund = talentRefundValue();
+  if(refund<=0) return;
+  const ok = confirm(`Reset all talents and refund ${refund} Voidcore${refund===1?'':'s'}?`);
+  if(!ok) return;
+  TALENTS.forEach(t=>{ talentRanks[t.id] = 0; });
+  meta.voidcores += refund;
+  renderTalents();
 }
 
 function updateItemsHUD(){
