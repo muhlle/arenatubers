@@ -198,6 +198,39 @@ function drawStickman(p){
   const RIM  = hurt ? '#ffffff' : '#314b61';
   const ELEC = '#74dfff';
 
+  function lightningEdge(alpha){
+    ctx.save();
+    ctx.translate(lean, -bob);
+    ctx.globalCompositeOperation='lighter';
+    ctx.globalAlpha=alpha;
+    ctx.shadowColor=ELEC; ctx.shadowBlur=10;
+    ctx.strokeStyle='rgba(116,223,255,0.85)';
+    ctx.lineWidth=1.35;
+    ctx.lineCap='round';
+    const phase=t*18;
+    const bolts=[
+      [[-7,-10],[-3,-24],[-7,-38],[-2,-50]],
+      [[7,15],[3,3],[8,-13],[2,-30],[8,-44]],
+      [[-9,-47],[-14,-38],[-10,-30]],
+      [[9,-47],[14,-39],[10,-31]]
+    ];
+    for(const b of bolts){
+      ctx.beginPath();
+      b.forEach((pt,i)=>{
+        const x=pt[0]+Math.sin(phase+i*1.7+pt[1]*0.05)*1.3;
+        const y=pt[1]+Math.cos(phase+i*1.3+pt[0]*0.07)*1.1;
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+    }
+    ctx.fillStyle='rgba(190,248,255,0.95)';
+    for(let i=0;i<3;i++){
+      const a=phase+i*2.1;
+      ctx.beginPath(); ctx.arc(Math.sin(a)*9, -42+Math.cos(a*0.7)*18, 1.4, 0, TAU); ctx.fill();
+    }
+    ctx.restore();
+  }
+
   /* ---------- figure painter (reused for motion-blur ghosts) ---------- */
   const paint = (alpha, tint) => {
     ctx.save();
@@ -278,14 +311,11 @@ function drawStickman(p){
     const shX = 0, shY = shoulderY+3;
     const armLen = 26; // long arms
     if(flurry){
-      // both fists hammering toward facing, alternating, with reach-matching stretch and smear
+      // both fists hammering toward facing. Arms keep their normal length; only fists echo outward.
       for(const s of [1,-1]){
         const out   = (s===pHand) ? pExt : 0.15 + pExt*0.1;
         const baseA = p.facing + s*0.16;
-        const attackReach = STICK.fofRange * (p.reach||1);
-        const stretchLen = 34 + attackReach*0.58;
-        const drawLen = lerp(armLen, stretchLen, out);
-        // smear: draw a few ghost segments of the punching arm
+        const drawLen = armLen * (0.95 + out*0.45);
         const reachX = Math.cos(baseA)*drawLen;
         const reachY = Math.sin(baseA)*drawLen;
         const elbowX = shX + s*7 + reachX*0.4;
@@ -297,9 +327,8 @@ function drawStickman(p){
           ctx.globalCompositeOperation='lighter';
           for(let g=1;g<=5;g++){
             const ga = baseA - s*(0.08+0.045*g);
-            const trailOut = out*(1-g*0.11);
-            const trailLen = lerp(armLen, stretchLen, Math.max(0.15, trailOut));
-            // mirror afterimage fists only, so the original arm remains the one that stretches
+            const trailLen = armLen*(1.35 + out*(0.95-g*0.08));
+            // mirror afterimage fists only, so the original arm remains normal length
             ctx.globalAlpha = alpha*(0.32-g*0.035)*out;
             ctx.fillStyle='rgba(150,235,255,0.75)';
             ctx.beginPath(); ctx.arc(shX+Math.cos(ga)*trailLen, shY+Math.sin(ga)*trailLen, Math.max(2.2, 5.8-g*0.65), 0, TAU); ctx.fill();
@@ -368,6 +397,7 @@ function drawStickman(p){
   if(p.iframes>0 && Math.floor(t*16)%2===0) ctx.globalAlpha=0.55;
   paint(1, null);
   ctx.globalAlpha=1;
+  lightningEdge(flurry ? 0.92 : 0.42);
 
   ctx.restore();
 }
@@ -401,6 +431,22 @@ function _previewStickman(c, t){
   tg.addColorStop(0,'#314b61'); tg.addColorStop(0.35,BODY); tg.addColorStop(1,BODY);
   c.strokeStyle=tg; c.lineWidth=10;
   c.beginPath(); c.moveTo(0,hipY); c.quadraticCurveTo(2,(hipY+shoulderY)/2,0,shoulderY); c.stroke();
+  c.save();
+  c.globalCompositeOperation='lighter';
+  c.globalAlpha=flurry?0.8:0.42;
+  c.shadowColor=ELEC; c.shadowBlur=10;
+  c.strokeStyle='rgba(116,223,255,0.86)'; c.lineWidth=1.35;
+  const ph=t*18;
+  for(const b of [[[-7,18],[-3,3],[-7,-12],[-2,-22]],[[7,44],[3,30],[8,13],[2,-4],[8,-18]],[[-9,-21],[-14,-12],[-10,-4]],[[9,-21],[14,-13],[10,-5]]]){
+    c.beginPath();
+    b.forEach((pt,i)=>{
+      const x=pt[0]+Math.sin(ph+i*1.7+pt[1]*0.05)*1.1;
+      const y=pt[1]+Math.cos(ph+i*1.3+pt[0]*0.07)*1;
+      if(i===0)c.moveTo(x,y);else c.lineTo(x,y);
+    });
+    c.stroke();
+  }
+  c.restore();
   // head
   c.fillStyle=BODY;
   if(c.roundRect){ c.beginPath(); c.roundRect(-12,headCY-12,24,24,6); c.fill(); }
@@ -425,12 +471,12 @@ function _previewStickman(c, t){
     for(const s of [1,-1]){
       const out=(s===hand)?ext:0.2;
       const dir=-0.15; // punch toward viewer-right
-      const len=30 + 72*out;
+      const len=30 + 14*out;
       const rx=Math.cos(dir)*len, ry=Math.sin(dir)*len;
       if(s===hand&&out>0.3){
         c.save(); c.globalCompositeOperation='lighter';
         for(let g=1;g<=4;g++){
-          const ga=dir-s*(0.08+g*0.05), glen=30+72*Math.max(0.2,out-g*0.1);
+          const ga=dir-s*(0.08+g*0.05), glen=34+24*Math.max(0.2,out-g*0.1);
           c.globalAlpha=(0.30-g*0.04)*out;
           c.fillStyle='rgba(150,235,255,0.7)';
           c.beginPath(); c.arc(Math.cos(ga)*glen,shY+6+Math.sin(ga)*glen,Math.max(2,5-g*0.5),0,Math.PI*2); c.fill();
