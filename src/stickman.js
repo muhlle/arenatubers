@@ -299,14 +299,8 @@ function drawStickman(p){
             const ga = baseA - s*(0.08+0.045*g);
             const trailOut = out*(1-g*0.11);
             const trailLen = lerp(armLen, stretchLen, Math.max(0.15, trailOut));
-            ctx.globalAlpha = alpha*(0.24-g*0.025)*out;
-            ctx.strokeStyle = g%2===0 ? '#d8fbff' : ELEC;
-            ctx.lineWidth = Math.max(2, 7-g*0.75);
-            ctx.beginPath();
-            ctx.moveTo(shX+s*7, shY+6);
-            ctx.lineTo(shX+Math.cos(ga)*trailLen, shY+Math.sin(ga)*trailLen);
-            ctx.stroke();
-            // mirror afterimage fist
+            // mirror afterimage fists only, so the original arm remains the one that stretches
+            ctx.globalAlpha = alpha*(0.32-g*0.035)*out;
             ctx.fillStyle='rgba(150,235,255,0.75)';
             ctx.beginPath(); ctx.arc(shX+Math.cos(ga)*trailLen, shY+Math.sin(ga)*trailLen, Math.max(2.2, 5.8-g*0.65), 0, TAU); ctx.fill();
           }
@@ -375,28 +369,6 @@ function drawStickman(p){
   paint(1, null);
   ctx.globalAlpha=1;
 
-  /* ---------- lightning wind blur while channelling ---------- */
-  if(flurry){
-    ctx.save();
-    ctx.rotate(p.facing);
-    ctx.globalCompositeOperation='lighter';
-    const rng = STICK.fofRange*(p.reach||1);
-    const wind = 0.22 + p.fof.flash*0.24;
-    for(let i=0;i<7;i++){
-      const yy = (i-3)*7 + Math.sin(t*18+i)*3;
-      const x0 = 28 + i*3;
-      const x1 = rng*(0.55+0.06*(i%3));
-      ctx.globalAlpha = wind*(1-i*0.08);
-      ctx.strokeStyle = i%2 ? 'rgba(210,250,255,0.75)' : 'rgba(116,223,255,0.72)';
-      ctx.lineWidth = i%2 ? 2 : 3;
-      ctx.beginPath();
-      ctx.moveTo(x0, yy);
-      ctx.quadraticCurveTo(rng*0.34, yy + Math.sin(t*24+i)*10, x1, yy*0.45);
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
   ctx.restore();
 }
 
@@ -459,8 +431,7 @@ function _previewStickman(c, t){
         c.save(); c.globalCompositeOperation='lighter';
         for(let g=1;g<=4;g++){
           const ga=dir-s*(0.08+g*0.05), glen=30+72*Math.max(0.2,out-g*0.1);
-          c.globalAlpha=(0.26-g*0.035)*out; c.strokeStyle=g%2?'#8fe6ff':'#d8fbff'; c.lineWidth=Math.max(2,6-g);
-          c.beginPath(); c.moveTo(s*8,shY+6); c.lineTo(Math.cos(ga)*glen,shY+6+Math.sin(ga)*glen); c.stroke();
+          c.globalAlpha=(0.30-g*0.04)*out;
           c.fillStyle='rgba(150,235,255,0.7)';
           c.beginPath(); c.arc(Math.cos(ga)*glen,shY+6+Math.sin(ga)*glen,Math.max(2,5-g*0.5),0,Math.PI*2); c.fill();
         }
