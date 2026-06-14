@@ -33,7 +33,7 @@ function stickmanInitPlayer(p, cdr){
   p.hp      = p.maxhp;
   p.cdr     = cdr;
   // Fists of Fury state
-  p.fof   = { active:0, cd:0, cdMax:STICK.fofCd*cdr, tick:0, flash:0, hits:0 };
+  p.fof   = { active:0, cd:0, cdMax:STICK.fofCd*cdr, tick:0, flash:0, hits:0, waves:[] };
   // Speed Burst (own dash field so the generic charge handler stays off)
   p.burst = { active:0, cd:0, cdMax:STICK.burstCd*cdr, dx:0, dy:0, ang:0 };
   // animation helpers
@@ -51,6 +51,10 @@ function updateStickmanAbilities(dt){
   if(p.fof)   p.fof.cd   -= dt;
   if(p.burst) p.burst.cd -= dt;
   if(p.fof && p.fof.flash>0) p.fof.flash = Math.max(0, p.fof.flash - dt*5);
+  if(p.fof && p.fof.waves){
+    for(const w of p.fof.waves) w.life -= dt;
+    p.fof.waves = p.fof.waves.filter(w=>w.life>0);
+  }
 
   // Movement amount (drives leg animation) — smoothed from actual displacement
   const moved = Math.hypot(p.x - p._lx, p.y - p._ly);
@@ -98,7 +102,8 @@ function updateStickmanAbilities(dt){
       p.fof.active = STICK.fofDur;
       p.fof.tick   = 0;
       p.fof.hits   = 0;
-      ftext(p.x,p.y-50,'FISTS OF FURY','#ffe07a',16,0.7);
+      p.fof.waves.length = 0;
+      ftext(p.x,p.y-50,'FISTS OF FURY','#8fe6ff',16,0.7);
     }
     if(p.fof.active>0){
       p.fof.active -= dt;
@@ -130,18 +135,28 @@ function fofConeHit(p){
     if(Math.abs(d) > half + (e.r/(Math.max(40,range)))) continue;
     hitEnemy(e, p.baseDmg*STICK.fofDmgPct*p.dmgMul, Math.random()<p.crit,
              Math.atan2(dy,dx), STICK.fofKnock, 'physical', 'stickman.fof');
-    burst(e.x, e.y, '#fff2c0', 3, 110, 0.16, 2);
+    burst(e.x, e.y, '#9fe8ff', 3, 130, 0.16, 2);
     landed++;
   }
   p.fof.flash = 1;
   p.fof.hits++;
+  if(p.fof.waves){
+    p.fof.waves.push({
+      a:p.facing,
+      side:p.fof.hits%2===0 ? 1 : -1,
+      life:0.34,
+      maxLife:0.34,
+      range:range
+    });
+    if(p.fof.waves.length>8) p.fof.waves.splice(0, p.fof.waves.length-8);
+  }
   // forward fist puff in aim direction
   const fx = p.x + Math.cos(p.facing)*42;
   const fy = p.y + Math.sin(p.facing)*42;
   for(let i=0;i<3;i++){
     const sa = p.facing + rand(-half,half);
     G.parts.push({x:fx, y:fy, vx:Math.cos(sa)*rand(140,260), vy:Math.sin(sa)*rand(140,260),
-      life:rand(0.14,0.26), color: i===0?'#ffffff':'#ffd24a', size:rand(2,4)});
+      life:rand(0.14,0.26), color: i===0?'#ffffff':'#74dfff', size:rand(2,4)});
   }
   if(landed>0 && p.fof.hits%2===0) shake(2.2, 0.12);
 }
@@ -194,8 +209,79 @@ function drawStickman(p){
   const pExt     = Math.pow(Math.sin((punchClk%1)*Math.PI), 0.6); // 0->1->0
 
   // colours
-  const BODY = hurt ? '#46464f' : '#16161d';
-  const RIM  = hurt ? '#ffffff' : '#3b3b48';
+  const BODY = hurt ? '#3f4852' : '#121821';
+  const RIM  = hurt ? '#ffffff' : '#314b61';
+  const ELEC = '#74dfff';
+
+  function lightningEdge(alpha){
+    ctx.save();
+    ctx.translate(lean, -bob);
+    ctx.globalCompositeOperation='lighter';
+    ctx.globalAlpha=alpha;
+    ctx.shadowColor=ELEC; ctx.shadowBlur=10;
+    ctx.strokeStyle='rgba(116,223,255,0.85)';
+    ctx.lineWidth=1.35;
+    ctx.lineCap='round';
+    const phase=t*18;
+    const bolts=[
+      [[-7,-10],[-3,-24],[-7,-38],[-2,-50]],
+      [[7,15],[3,3],[8,-13],[2,-30],[8,-44]],
+      [[-9,-47],[-14,-38],[-10,-30]],
+      [[9,-47],[14,-39],[10,-31]]
+    ];
+    for(const b of bolts){
+      ctx.beginPath();
+      b.forEach((pt,i)=>{
+        const x=pt[0]+Math.sin(phase+i*1.7+pt[1]*0.05)*1.3;
+        const y=pt[1]+Math.cos(phase+i*1.3+pt[0]*0.07)*1.1;
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+    }
+    ctx.fillStyle='rgba(190,248,255,0.95)';
+    for(let i=0;i<3;i++){
+      const a=phase+i*2.1;
+      ctx.beginPath(); ctx.arc(Math.sin(a)*9, -42+Math.cos(a*0.7)*18, 1.4, 0, TAU); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function reachPushWaves(){
+    const waves = p.fof && p.fof.waves ? p.fof.waves : [];
+    if(!waves.length) return;
+    ctx.save();
+    ctx.translate(lean, -bob);
+    ctx.globalCompositeOperation='lighter';
+    ctx.filter='blur(6px)';
+    for(const wave of waves){
+      const prog = 1 - wave.life / wave.maxLife;
+      const ease = 1 - Math.pow(1-prog, 2);
+      const alpha = 0.5 * (1-prog);
+      const x0 = 22 + wave.range*0.12*ease;
+      const x1 = 45 + wave.range*(0.48 + 0.42*ease);
+      const y = wave.side * (8 + 9*prog) + Math.sin(t*20 + wave.side)*2;
+      const w0 = 7 + 12*prog;
+      const w1 = 16 + 24*prog;
+      ctx.save();
+      ctx.rotate(wave.a);
+      ctx.globalAlpha = alpha;
+      const grad = ctx.createLinearGradient(x0, y, x1, y);
+      grad.addColorStop(0, 'rgba(95,210,255,0)');
+      grad.addColorStop(0.34, 'rgba(95,210,255,0.26)');
+      grad.addColorStop(0.68, 'rgba(170,245,255,0.50)');
+      grad.addColorStop(1, 'rgba(95,210,255,0)');
+      ctx.fillStyle=grad;
+      ctx.beginPath();
+      ctx.moveTo(x0, y-w0);
+      ctx.bezierCurveTo(x0+(x1-x0)*0.25, y-w0*1.8, x0+(x1-x0)*0.72, y-w1, x1, y-w0*0.2);
+      ctx.bezierCurveTo(x0+(x1-x0)*0.76, y+w1, x0+(x1-x0)*0.28, y+w0*1.55, x0, y+w0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.filter='none';
+    ctx.restore();
+  }
 
   /* ---------- figure painter (reused for motion-blur ghosts) ---------- */
   const paint = (alpha, tint) => {
@@ -248,37 +334,56 @@ function drawStickman(p){
     }
     if(!tint){
       // top rim light for a touch of dimension
-      ctx.strokeStyle='rgba(150,230,255,0.35)'; ctx.lineWidth=1.5;
+      ctx.strokeStyle='rgba(150,230,255,0.45)'; ctx.lineWidth=1.5;
       ctx.beginPath();
       ctx.moveTo(-hs+3+faceX*2, headCY-hs+1.5);
       ctx.lineTo( hs-3+faceX*2, headCY-hs+1.5);
       ctx.stroke();
+      // lightning-infused eyes: blue living flame / current leaking forward
+      const eyeY = headCY - 2.5;
+      const eyeForward = faceX*2.2;
+      ctx.save();
+      ctx.globalCompositeOperation='lighter';
+      ctx.shadowColor=ELEC; ctx.shadowBlur=12;
+      for(const s of [-1,1]){
+        const ex = faceX*2 + s*4.2 + eyeForward;
+        const flame = 1 + Math.sin(t*18+s*2.1)*0.22;
+        ctx.fillStyle='rgba(180,245,255,0.95)';
+        ctx.beginPath(); ctx.ellipse(ex, eyeY, 2.2, 3.2*flame, 0, 0, TAU); ctx.fill();
+        ctx.strokeStyle='rgba(116,223,255,0.75)'; ctx.lineWidth=1.3;
+        ctx.beginPath();
+        ctx.moveTo(ex+faceX*1.6, eyeY-1);
+        ctx.quadraticCurveTo(ex+faceX*(8+flame*2), eyeY-5*s, ex+faceX*(15+flame*4), eyeY-1+s*2);
+        ctx.stroke();
+      }
+      ctx.restore();
     }
 
     /* ----- ARMS ----- */
     const shX = 0, shY = shoulderY+3;
     const armLen = 26; // long arms
     if(flurry){
-      // both fists hammering toward facing, alternating, with smear
+      // both fists hammering toward facing. Arms keep their normal length; only fists echo outward.
       for(const s of [1,-1]){
         const out   = (s===pHand) ? pExt : 0.15 + pExt*0.1;
         const baseA = p.facing + s*0.16;
-        // smear: draw a few ghost segments of the punching arm
-        const reachX = Math.cos(baseA)*armLen*(0.5+out*0.9);
-        const reachY = Math.sin(baseA)*armLen*(0.5+out*0.9);
+        const drawLen = armLen * (0.95 + out*0.45);
+        const reachX = Math.cos(baseA)*drawLen;
+        const reachY = Math.sin(baseA)*drawLen;
         const elbowX = shX + s*7 + reachX*0.4;
         const elbowY = shY + 6 + reachY*0.4;
         const fistX  = shX + reachX;
         const fistY  = shY + reachY;
-        if(s===pHand && out>0.4 && !tint){
+        if(s===pHand && out>0.28 && !tint){
           ctx.save();
-          ctx.globalAlpha = alpha*0.35*out; ctx.strokeStyle='#8fe6ff'; ctx.lineWidth=6;
-          for(let g=1;g<=2;g++){
-            const ga = baseA - s*0.18*g;
-            ctx.beginPath();
-            ctx.moveTo(shX+s*7, shY+6);
-            ctx.lineTo(shX+Math.cos(ga)*armLen*(0.5+out*0.9), shY+Math.sin(ga)*armLen*(0.5+out*0.9));
-            ctx.stroke();
+          ctx.globalCompositeOperation='lighter';
+          for(let g=1;g<=5;g++){
+            const ga = baseA - s*(0.08+0.045*g);
+            const trailLen = armLen*(1.35 + out*(0.95-g*0.08));
+            // mirror afterimage fists only, so the original arm remains normal length
+            ctx.globalAlpha = alpha*(0.32-g*0.035)*out;
+            ctx.fillStyle='rgba(150,235,255,0.75)';
+            ctx.beginPath(); ctx.arc(shX+Math.cos(ga)*trailLen, shY+Math.sin(ga)*trailLen, Math.max(2.2, 5.8-g*0.65), 0, TAU); ctx.fill();
           }
           ctx.restore();
         }
@@ -294,8 +399,15 @@ function drawStickman(p){
           ctx.save();
           ctx.globalCompositeOperation='lighter';
           ctx.globalAlpha = alpha*(0.5+p.fof.flash*0.5)*out;
-          ctx.fillStyle='rgba(255,240,180,0.95)'; ctx.shadowColor='#ffd24a'; ctx.shadowBlur=16;
+          ctx.fillStyle='rgba(205,250,255,0.98)'; ctx.shadowColor=ELEC; ctx.shadowBlur=18;
           ctx.beginPath(); ctx.arc(fistX, fistY, 6.5, 0, TAU); ctx.fill();
+          ctx.strokeStyle='rgba(116,223,255,0.9)'; ctx.lineWidth=1.2;
+          for(let z=0; z<2; z++){
+            const za = baseA + rand(-0.35,0.35);
+            ctx.beginPath(); ctx.moveTo(fistX, fistY);
+            ctx.lineTo(fistX+Math.cos(za)*rand(12,22), fistY+Math.sin(za)*rand(12,22));
+            ctx.stroke();
+          }
           ctx.restore();
         }
       }
@@ -337,30 +449,16 @@ function drawStickman(p){
   if(p.iframes>0 && Math.floor(t*16)%2===0) ctx.globalAlpha=0.55;
   paint(1, null);
   ctx.globalAlpha=1;
-
-  /* ---------- forward cone telegraph while channelling ---------- */
-  if(flurry){
-    ctx.save();
-    ctx.rotate(p.facing);
-    ctx.globalCompositeOperation='lighter';
-    const rng = STICK.fofRange*(p.reach||1);
-    const cg = ctx.createRadialGradient(0,0,10,0,0,rng);
-    const pulse = 0.10 + p.fof.flash*0.16;
-    cg.addColorStop(0,'rgba(255,225,120,'+pulse+')');
-    cg.addColorStop(1,'rgba(255,180,40,0)');
-    ctx.fillStyle=cg;
-    ctx.beginPath(); ctx.moveTo(0,0);
-    ctx.arc(0,0,rng,-STICK.fofHalfArc,STICK.fofHalfArc);
-    ctx.closePath(); ctx.fill();
-    ctx.restore();
-  }
+  reachPushWaves();
+  lightningEdge(flurry ? 0.92 : 0.42);
 
   ctx.restore();
 }
 
 /* ---------- character-select preview ---------- */
 function _previewStickman(c, t){
-  const BODY='#17171e';
+  const BODY='#121821';
+  const ELEC='#74dfff';
   const move=0; // idle in preview, gentle flurry showcase
   const flurry = (Math.floor(t/2.4)%2)===1;   // alternate idle / flurry every few sec
   const bob = Math.sin(t*2)*1.4;
@@ -383,33 +481,90 @@ function _previewStickman(c, t){
   }
   // torso
   const tg=c.createLinearGradient(0,shoulderY,0,hipY);
-  tg.addColorStop(0,'#3b3b48'); tg.addColorStop(0.35,BODY); tg.addColorStop(1,BODY);
+  tg.addColorStop(0,'#314b61'); tg.addColorStop(0.35,BODY); tg.addColorStop(1,BODY);
   c.strokeStyle=tg; c.lineWidth=10;
   c.beginPath(); c.moveTo(0,hipY); c.quadraticCurveTo(2,(hipY+shoulderY)/2,0,shoulderY); c.stroke();
+  c.save();
+  c.globalCompositeOperation='lighter';
+  c.globalAlpha=flurry?0.8:0.42;
+  c.shadowColor=ELEC; c.shadowBlur=10;
+  c.strokeStyle='rgba(116,223,255,0.86)'; c.lineWidth=1.35;
+  const ph=t*18;
+  for(const b of [[[-7,18],[-3,3],[-7,-12],[-2,-22]],[[7,44],[3,30],[8,13],[2,-4],[8,-18]],[[-9,-21],[-14,-12],[-10,-4]],[[9,-21],[14,-13],[10,-5]]]){
+    c.beginPath();
+    b.forEach((pt,i)=>{
+      const x=pt[0]+Math.sin(ph+i*1.7+pt[1]*0.05)*1.1;
+      const y=pt[1]+Math.cos(ph+i*1.3+pt[0]*0.07)*1;
+      if(i===0)c.moveTo(x,y);else c.lineTo(x,y);
+    });
+    c.stroke();
+  }
+  c.restore();
   // head
   c.fillStyle=BODY;
   if(c.roundRect){ c.beginPath(); c.roundRect(-12,headCY-12,24,24,6); c.fill(); }
   else { c.fillRect(-12,headCY-12,24,24); }
   c.strokeStyle='rgba(150,230,255,0.4)'; c.lineWidth=1.6;
   c.beginPath(); c.moveTo(-8,headCY-10.5); c.lineTo(8,headCY-10.5); c.stroke();
+  c.save();
+  c.globalCompositeOperation='lighter';
+  c.shadowColor=ELEC; c.shadowBlur=12;
+  for(const s of [-1,1]){
+    const ex=s*4.5, ey=headCY-2.5, flame=1+Math.sin(t*18+s*2)*0.22;
+    c.fillStyle='rgba(180,245,255,0.96)';
+    c.beginPath(); c.ellipse(ex,ey,2.2,3.2*flame,0,0,Math.PI*2); c.fill();
+    c.strokeStyle='rgba(116,223,255,0.78)'; c.lineWidth=1.25;
+    c.beginPath(); c.moveTo(ex+2,ey-1); c.quadraticCurveTo(ex+10,ey-5*s,ex+17,ey-1+s*2); c.stroke();
+  }
+  c.restore();
   // arms
   const shY=shoulderY+4;
   if(flurry){
     const clk=t*11, hand=Math.floor(clk)%2===0?1:-1, ext=Math.pow(Math.sin((clk%1)*Math.PI),0.6);
+    c.save();
+    c.translate(0, shY+6);
+    c.globalCompositeOperation='lighter';
+    c.filter='blur(5px)';
+    for(let i=0;i<3;i++){
+      const prog=(t*2.6+i*0.33)%1;
+      c.globalAlpha=0.42*(1-prog);
+      const y=(i-1)*8 + prog*13 + Math.sin(t*18+i)*2;
+      const x0=22+prog*10, x1=58+prog*54, w0=7+prog*10, w1=13+prog*17;
+      const pg=c.createLinearGradient(x0,y,x1,y);
+      pg.addColorStop(0,'rgba(95,210,255,0)');
+      pg.addColorStop(0.35,'rgba(95,210,255,0.24)');
+      pg.addColorStop(0.76,'rgba(180,248,255,0.50)');
+      pg.addColorStop(1,'rgba(95,210,255,0)');
+      c.fillStyle=pg;
+      c.beginPath();
+      c.moveTo(x0,y-w0);
+      c.bezierCurveTo(x0+18,y-w0*1.7,x0+48,y-w1,x1,y-w0*0.25);
+      c.bezierCurveTo(x0+54,y+w1,x0+20,y+w0*1.45,x0,y+w0);
+      c.closePath(); c.fill();
+    }
+    c.filter='none';
+    c.restore();
     for(const s of [1,-1]){
       const out=(s===hand)?ext:0.2;
       const dir=-0.15; // punch toward viewer-right
-      const rx=Math.cos(dir)*30*(0.5+out*0.9), ry=Math.sin(dir)*30*(0.5+out*0.9);
-      if(s===hand&&out>0.4){
-        c.save(); c.globalAlpha=0.35*out; c.strokeStyle='#8fe6ff'; c.lineWidth=6;
-        c.beginPath(); c.moveTo(s*8,shY+6); c.lineTo(rx*0.9,shY+6+ry*0.9); c.stroke(); c.restore();
+      const len=30 + 14*out;
+      const rx=Math.cos(dir)*len, ry=Math.sin(dir)*len;
+      if(s===hand&&out>0.3){
+        c.save(); c.globalCompositeOperation='lighter';
+        for(let g=1;g<=4;g++){
+          const ga=dir-s*(0.08+g*0.05), glen=34+24*Math.max(0.2,out-g*0.1);
+          c.globalAlpha=(0.30-g*0.04)*out;
+          c.fillStyle='rgba(150,235,255,0.7)';
+          c.beginPath(); c.arc(Math.cos(ga)*glen,shY+6+Math.sin(ga)*glen,Math.max(2,5-g*0.5),0,Math.PI*2); c.fill();
+        }
+        c.restore();
       }
       c.strokeStyle=BODY; c.lineWidth=6.5;
       c.beginPath(); c.moveTo(s*8,shY+6); c.quadraticCurveTo(rx*0.5,shY+10+ry*0.4,rx,shY+6+ry); c.stroke();
       c.fillStyle=BODY; c.beginPath(); c.arc(rx,shY+6+ry,5,0,Math.PI*2); c.fill();
       if(s===hand&&out>0.55){
         c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=0.6*out;
-        c.fillStyle='rgba(255,240,180,0.95)'; c.shadowColor='#ffd24a'; c.shadowBlur=16;
+        c.fillStyle='rgba(205,250,255,0.98)'; c.shadowColor=ELEC; c.shadowBlur=16;
         c.beginPath(); c.arc(rx,shY+6+ry,7,0,Math.PI*2); c.fill(); c.restore();
       }
     }
