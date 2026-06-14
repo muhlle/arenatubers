@@ -663,8 +663,10 @@ function recordDirectedWaveSpawn(type,d){
 }
 
 // ---- SPAWN -----------------------------------------------
-const SPAWN_BEHIND_CHANCE = 0.90;
+const SPAWN_BEHIND_CHANCE = 0.75;
+const SPAWN_FORWARD_CHANCE = 0.15;
 const SPAWN_BEHIND_SPREAD = 0.55;
+const SPAWN_FORWARD_SPREAD = 0.45;
 const SPAWN_SAFE_ARC_SPREAD = 1.35;
 const ADAPTIVE_SPAWN_ARENA_R = 4000;
 const ADAPTIVE_SPAWN_EDGE_LERP = 0.50;
@@ -680,12 +682,24 @@ function spawnAngleBehindPlayer(spread){
   return Math.atan2(by, bx) + rand(-spread, spread);
 }
 
+function spawnAngleAheadOfPlayer(spread){
+  const p = (typeof G!=='undefined' && G) ? G.player : null;
+  if(!p) return Math.random()*TAU;
+  const moveA = (typeof p.moveAngle==='number') ? p.moveAngle : (p.facing||0);
+  const r = getArenaR();
+  const fx = p.x + Math.cos(moveA)*r;
+  const fy = p.y + Math.sin(moveA)*r;
+  return Math.atan2(fy, fx) + rand(-spread, spread);
+}
+
 /* Directional spawn bias.
-   Most spawns appear on the side the player is moving AWAY from. The rest use
-   a wider back/side arc instead of pure random, so large packs should not pop
-   directly in the direction the player is kiting toward. */
+   Most spawns appear on the side the player is moving AWAY from. A small share
+   appears ahead of the player to keep long kites from becoming completely free,
+   and the remainder uses a wider back/side arc. */
 function biasedSpawnAngle(){
-  if(Math.random() < SPAWN_BEHIND_CHANCE) return spawnAngleBehindPlayer(SPAWN_BEHIND_SPREAD);
+  const roll = Math.random();
+  if(roll < SPAWN_BEHIND_CHANCE) return spawnAngleBehindPlayer(SPAWN_BEHIND_SPREAD);
+  if(roll < SPAWN_BEHIND_CHANCE + SPAWN_FORWARD_CHANCE) return spawnAngleAheadOfPlayer(SPAWN_FORWARD_SPREAD);
   return spawnAngleBehindPlayer(SPAWN_SAFE_ARC_SPREAD);
 }
 
