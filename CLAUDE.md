@@ -15,6 +15,7 @@ This is a conservative split of an existing single-file canvas game. Do not rewr
 - `src/characters.js`: character definitions (CHARACTERS array), selectedChar state, character select UI and animated previews.
 - `src/skeleton.js`: Skeleton (Death Knight) ability update (updateSkeletonAbilities), player init hook (skeletonInitPlayer). Drawing stays in rendering.js.
 - `src/warlock.js`: Warlock drawing (drawWarlock), all warlock abilities, updateWarlockAbilities(dt), drawPlayerBolts(), warlockInitPlayer(p,cdr).
+- `src/stickman.js`: One Punch (Stickman) — stickmanInitPlayer(p,cdr), updateStickmanAbilities(dt), drawStickman(p), and _previewStickman(c,t) for the character-select preview. Bound abilities: LMB Fists of Fury (frontal-cone flurry: 25% base dmg, 3 ticks/s for 3s, then 1.5s recovery) and SPACE Speed Burst (custom dash via p.burst, with motion-blur ghosts + brief i-frames). Q/E/R are intentionally unbound for now. Tuning lives in the STICK constant.
 - `src/events.js`: In-run event system (EVENTS array, queueEvent, updateEvents). Scaffold for horde/elite/darkness events.
 - `src/run-logger.js`: Run telemetry and pause-screen "Details" view. Tracks damage done/taken, kills, level ups, powerup/item choices, and posts completed runs to `server.js` when available.
 - `server.js`: Optional local static server plus `/api/run-log` file persistence into `run-database/<player>/<map>/<date_wave_result>/`.

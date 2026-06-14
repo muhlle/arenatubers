@@ -705,6 +705,7 @@ function update(dt){
 
   // Character ability dispatch — each class handles its own abilities
   if(G.charClass==='warlock') updateWarlockAbilities(dt);
+  else if(G.charClass==='stickman') updateStickmanAbilities(dt);
   else updateSkeletonAbilities(dt, mx, my);
 
   /* ---- enemies ---- */

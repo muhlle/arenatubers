@@ -685,6 +685,7 @@ function drawWolf(w){
 }
 function drawPlayer(p){
   if(G && G.charClass==='warlock'){ drawWarlock(p); return; }
+  if(G && G.charClass==='stickman'){ drawStickman(p); return; }
   const t = performance.now()/1000;
   const auraPulse = 1 + Math.sin(t*5)*0.08;
   ctx.save();
@@ -1939,6 +1940,13 @@ function updateHUD(){
     if(buffBar) buffBar.innerHTML = '';
   }
   updateAbilityCd('abS', p.dash.cd,  p.dash.cdMax);
+  if(G.charClass==='stickman'){
+    // Stickman: only LMB (Fists of Fury) + SPACE (Speed Burst) are bound for now
+    updateAbilityCd('abS', p.burst ? p.burst.cd : 0, p.burst ? p.burst.cdMax : 1);
+    updateAbilityCd('abQ', 0, 1);
+    updateAbilityCd('abE', 0, 1);
+    updateAbilityCd('abR', 0, 1);
+  }
   const now = performance.now();
   if(!updateHUD._lt) updateHUD._lt = now;
   const dt = Math.min((now - updateHUD._lt)/1000, 0.1);

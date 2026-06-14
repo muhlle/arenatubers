@@ -37,6 +37,23 @@ const CHARACTERS = [
       { key:'SPC', name:'Shadow Step',   dmgType:null,       tags:['shadow','mobility'],                     desc:'Blink forward instantly, leaving a shadow afterimage.' },
       { key:'PSV', name:'Soul Harvest',  dmgType:'shadow',   tags:['soul','passive'],                       desc:'Enemies that die while Burning or Cursed can drop Soul Fragments that scale Warlock spell pressure.' },
     ]
+  },
+  {
+    id: 'stickman',
+    name: 'ONE PUNCH',
+    class: 'Stickman',
+    color: '#16161d',
+    accent: '#8fe6ff',
+    lore: 'A blur of fists. Tall, lean and impossibly fast — it answers every threat with a storm of punches.',
+    // Karakter-tags bruges til item/powerup filtrering og synergier
+    tags: ['melee', 'physical', 'speed', 'combo', 'flurry'],
+    abilities: [
+      { key:'LMB', name:'Fists of Fury', dmgType:'physical', tags:['physical','flurry','aoe','combo'], desc:'Channel a 3s flurry of punches in a cone ahead — 3 hits/sec for 25% damage each. 1.5s recovery after.' },
+      { key:'Q',   name:'—',             dmgType:null,       tags:[],                                   desc:'Unbound — coming soon.' },
+      { key:'E',   name:'—',             dmgType:null,       tags:[],                                   desc:'Unbound — coming soon.' },
+      { key:'R',   name:'—',             dmgType:null,       tags:[],                                   desc:'Unbound — coming soon.' },
+      { key:'SPC', name:'Speed Burst',   dmgType:null,       tags:['mobility','speed'],                 desc:'Short explosive dash leaving a streaking motion blur. Brief invulnerability.' },
+    ]
   }
 ];
 
@@ -106,6 +123,7 @@ function _drawCharPreview(id){
   c.fillStyle=bg; c.fillRect(0,0,200,220);
   c.save(); c.translate(100,130);
   if(id==='skeleton') _previewSkeleton(c,t);
+  else if(id==='stickman') _previewStickman(c,t);
   else _previewWarlock(c,t);
   c.restore();
 }

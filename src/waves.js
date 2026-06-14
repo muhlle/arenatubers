@@ -175,6 +175,7 @@ function startRun(mapId){
   buildCurrentArena(mapId);
   if(typeof updateAbilityIcons === 'function') updateAbilityIcons(selectedChar);
   if(selectedChar==='warlock') warlockInitPlayer(G.player, G.player.cdr);
+  else if(selectedChar==='stickman') stickmanInitPlayer(G.player, G.player.cdr);
   else if(selectedChar==='skeleton') skeletonInitPlayer(G.player, G.player.cdr);
   if(typeof runLogStart === 'function') runLogStart(mapId);
   startWave(1);

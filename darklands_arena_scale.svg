@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="680" viewBox="0 0 960 680">
+  <defs>
+    <radialGradient id="darkFloor" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a0d2e"/>
+      <stop offset="50%" stop-color="#110820"/>
+      <stop offset="85%" stop-color="#09050f"/>
+      <stop offset="100%" stop-color="#050208"/>
+    </radialGradient>
+    <radialGradient id="voidGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c840ff" stop-opacity="0.55"/>
+      <stop offset="45%" stop-color="#7b20d0" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#7b20d0" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#d8c7ff"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="680" fill="#050208"/>
+  <text x="40" y="42" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#f0e6ff">The Darklands Arena - scale diagram</text>
+  <text x="40" y="68" font-family="Arial, sans-serif" font-size="14" fill="#a996c8">Scale used here: 1 px = 40 game units. Centered at world coordinate (0, 0).</text>
+
+  <!-- Main arena: R 9200 units / 40 = 230px -->
+  <g transform="translate(390 355)">
+    <circle r="232.3" fill="none" stroke="#1a0828" stroke-width="2.25"/>
+    <circle r="230" fill="url(#darkFloor)" stroke="#3a0a50" stroke-width="0.45"/>
+    <circle r="230" fill="url(#voidGlow)" filter="url(#glow)"/>
+
+    <!-- Actual design rings scaled from drawArenaDark: 820, 620, 200 -->
+    <circle r="20.5" fill="none" stroke="#7800b4" stroke-opacity="0.55" stroke-width="0.3"/>
+    <circle r="15.5" fill="none" stroke="#8000c8" stroke-opacity="0.42" stroke-width="0.18"/>
+    <circle r="5" fill="#1e0832" stroke="#9600ff" stroke-opacity="0.65" stroke-width="0.25"/>
+
+    <!-- Pit comparison: R 2300 / 40 = 57.5px -->
+    <circle r="57.5" fill="none" stroke="#e8b64c" stroke-width="2" stroke-dasharray="7 5"/>
+    <text x="-53" y="-64" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#e8b64c">The Pit R=2300</text>
+
+    <!-- Approx 1280x720 viewport: 32x18px at this scale -->
+    <rect x="-16" y="-9" width="32" height="18" fill="none" stroke="#9adcff" stroke-width="1.5"/>
+    <text x="22" y="4" font-family="Arial, sans-serif" font-size="11" fill="#9adcff">1280x720 view</text>
+
+    <!-- Decorative markers that match generation counts conceptually -->
+    <g fill="#c840ff" opacity="0.82">
+      <circle cx="230" cy="0" r="2.2"/>
+      <circle cx="162.6" cy="162.6" r="2.2"/>
+      <circle cx="0" cy="230" r="2.2"/>
+      <circle cx="-162.6" cy="162.6" r="2.2"/>
+      <circle cx="-230" cy="0" r="2.2"/>
+      <circle cx="-162.6" cy="-162.6" r="2.2"/>
+      <circle cx="0" cy="-230" r="2.2"/>
+      <circle cx="162.6" cy="-162.6" r="2.2"/>
+    </g>
+
+    <!-- Radius dimension -->
+    <line x1="0" y1="0" x2="230" y2="0" stroke="#d8c7ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="78" y="-10" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f0e6ff">R = 9200</text>
+
+    <!-- Diameter dimension -->
+    <line x1="-230" y1="254" x2="230" y2="254" stroke="#d8c7ff" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <text x="-64" y="279" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f0e6ff">D = 18400 game units</text>
+  </g>
+
+  <g transform="translate(680 150)">
+    <rect x="0" y="0" width="240" height="360" rx="8" fill="#100b18" stroke="#3a2050"/>
+    <text x="18" y="34" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#f0e6ff">Actual code values</text>
+    <text x="18" y="70" font-family="Arial, sans-serif" font-size="14" fill="#d8c7ff">Darklands radius: 9200</text>
+    <text x="18" y="96" font-family="Arial, sans-serif" font-size="14" fill="#d8c7ff">Darklands diameter: 18400</text>
+    <text x="18" y="122" font-family="Arial, sans-serif" font-size="14" fill="#e8b64c">The Pit radius: 2300</text>
+    <text x="18" y="148" font-family="Arial, sans-serif" font-size="14" fill="#e8b64c">The Pit diameter: 4600</text>
+    <line x1="18" y1="170" x2="222" y2="170" stroke="#3a2050"/>
+    <text x="18" y="202" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#c840ff">Ratio</text>
+    <text x="18" y="228" font-family="Arial, sans-serif" font-size="14" fill="#d8c7ff">Radius: 4:1 vs The Pit</text>
+    <text x="18" y="254" font-family="Arial, sans-serif" font-size="14" fill="#d8c7ff">Diameter: 4:1 vs The Pit</text>
+    <text x="18" y="280" font-family="Arial, sans-serif" font-size="14" fill="#d8c7ff">Area: 16:1 vs The Pit</text>
+    <line x1="18" y1="302" x2="222" y2="302" stroke="#3a2050"/>
+    <text x="18" y="330" font-family="Arial, sans-serif" font-size="13" fill="#9adcff">1280px screen width sees</text>
+    <text x="18" y="350" font-family="Arial, sans-serif" font-size="13" fill="#9adcff">about 7% of the diameter.</text>
+  </g>
+</svg>
