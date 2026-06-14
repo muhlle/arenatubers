@@ -136,7 +136,7 @@ function startRun(mapId){
       x:0, y:0, r:26, facing:0,
       hp:0, maxhp: Math.round(100*(1+0.15*tval('vita'))),
       speed: 250*(1+0.08*tval('swft')),
-      baseDmg: 12, armor: 0.08,
+      baseDmg: 12, baseDmgBase: 12, armor: 0.08,
       level:1, xp:0, xpNext:28,
       dmgMul: 1+0.10*tval('brut'), atkSpd:1, reach: 1+(tval('rage')?0.18:0),
       crit:0.05, lifesteal:0, xpMul:1+0.15*tval('gred'), pickupRange, xpPickupRange:pickupRange, projectileSpeed:1,

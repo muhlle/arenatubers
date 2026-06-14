@@ -59,7 +59,7 @@ function countPlayerTag(tag){
 /* ---------------- Level ups / powerups ---------------- */
 const POWERUPS = [
   // ── Universal ──
-  {id:'steel',    for:['all'],      tags:['damage'],              max:5, ic:'⚔', nm:'Sharpened Edge',    ds:'+12% damage.',                                      f:p=>p.dmgMul*=1.12},
+  {id:'steel',    for:['all'],      tags:['damage'],              max:5, ic:'⚔', nm:'Sharpened Edge',    ds:'+12% base damage.',                                 f:p=>p.baseDmg*=1.12},
   {id:'frenzy',   for:['all'],      tags:['attack-speed'],        max:5, ic:'⚡', nm:'Frenzy',             ds:'+10% attack speed.',                                f:p=>p.atkSpd*=1.10},
   {id:'stride',   for:['all'],      tags:['mobility'],            max:5, ic:'👟', nm:'War Stride',         ds:'+8% movement speed.',                               f:p=>p.speed*=1.08},
   {id:'hide',     for:['all'],      tags:['defensive'],           max:5, ic:'❤', nm:'Thick Hide',         ds:'+20 max health and heal 30.',                       f:p=>{p.maxhp+=20;p.hp=Math.min(p.maxhp,p.hp+30);}},
@@ -105,10 +105,10 @@ function signedPct(n){ return (n>=0?'+':'') + n + '%'; }
 
 const POWERUP_DETAILS = {
   steel:{
-    current:c=>`${signedPct(pctMult(1.12,c))} all damage`,
-    next:c=>`${signedPct(pctMult(1.12,c+1))} all damage`,
-    scale:'Multiplicative +12% damage per stack.',
-    syn:'Universal scaler for Whirlwind, Slam, Bone Shield, Shadow Bolt and item damage.'
+    current:c=>`${signedPct(pctMult(1.12,c))} base damage`,
+    next:c=>`${signedPct(pctMult(1.12,c+1))} base damage`,
+    scale:'Multiplicative +12% base damage per stack.',
+    syn:'Scales weapon and ability damage that is based on your character base damage.'
   },
   frenzy:{
     current:c=>`${signedPct(pctMult(1.10,c))} attack speed`,
@@ -131,7 +131,7 @@ const POWERUP_DETAILS = {
   crit:{
     current:c=>`+${c*8}% crit chance`,
     next:c=>`+${(c+1)*8}% crit chance`,
-    scale:'+8 percentage points crit chance per stack.',
+    scale:'+8 percentage points crit chance per stack. Critical hits deal 200% total damage.',
     syn:'Great with high-hit builds: Whirlwind, Multishot bolts, Bone Shield and cleaves.'
   },
   leech:{

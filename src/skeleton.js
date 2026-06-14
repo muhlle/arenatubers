@@ -9,6 +9,7 @@ function skeletonInitPlayer(p, cdr){
   p.maxhp   = Math.round(120*(1+0.15*tval('vita')));
   p.speed   = 220*(1+0.08*tval('swft'));
   p.baseDmg = 12;
+  p.baseDmgBase = p.baseDmg;
   p.armor   = 0.08;
   p.r       = 24;
   p.hp      = p.maxhp;
