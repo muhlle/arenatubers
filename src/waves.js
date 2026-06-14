@@ -18,6 +18,7 @@ function getFinalWave(){
   return FINAL_WAVE;
 }
 const EARLY_CLEAR_MIN = 20;
+const WAVE_BUDGET_MULT = 2.0;
 
 function waveDuration(w){
   if(w>=getFinalWave()) return 90;
@@ -48,7 +49,7 @@ function waveBudget(w){
   const rate = waveSpawnInterval(w);
   const base = Math.ceil(dur / rate);
   const bonus = w%5===0 ? Math.floor(w*1.5) : Math.floor(w*2.2);
-  return Math.max(20, base + bonus);
+  return Math.ceil(Math.max(20, base + bonus) * WAVE_BUDGET_MULT);
 }
 function startWave(w){
   G.wave = w;
@@ -174,6 +175,7 @@ function startRun(mapId){
   buildCurrentArena(mapId);
   if(typeof updateAbilityIcons === 'function') updateAbilityIcons(selectedChar);
   if(selectedChar==='warlock') warlockInitPlayer(G.player, G.player.cdr);
+  else if(selectedChar==='stickman') stickmanInitPlayer(G.player, G.player.cdr);
   else if(selectedChar==='skeleton') skeletonInitPlayer(G.player, G.player.cdr);
   if(typeof runLogStart === 'function') runLogStart(mapId);
   startWave(1);
