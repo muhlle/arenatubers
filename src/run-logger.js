@@ -563,7 +563,7 @@ function renderRunStats(targetId){
       <div><span>Damage Taken</span><b>${runLogInt(log.totals.damageTaken)}</b></div>
       <div><span>Hits Taken</span><b>${hitsTaken}</b></div>
       <div><span>Kills</span><b>${log.totals.kills}</b></div>
-      <div><span>Choices</span><b>${log.totals.powerups + log.totals.items}</b></div>
+      <div><span>Power ups</span><b>${log.totals.powerups + log.totals.items}</b></div>
     </div>
     <div class="runlog-grid">
       <section><h3>Damage Done</h3><table><tr><th>Source</th><th>Dmg</th><th>Hits</th><th>Crit</th><th>Avg</th></tr>${doneRows || '<tr><td colspan="5">No damage yet.</td></tr>'}</table></section>
@@ -574,6 +574,103 @@ function renderRunStats(targetId){
     row.onmouseenter = () => showTooltip(decodeURIComponent(row.dataset.runtip || ''));
     row.onmousemove = moveTooltip;
     row.onmouseleave = hideTooltip;
+  });
+  setupRunStatsPanelDrag(el);
+}
+
+const RUN_STATS_PANEL_STORAGE_PREFIX = 'grukkRunStatsPanelLayout:';
+
+function runStatsPanelStorageKey(el){
+  return RUN_STATS_PANEL_STORAGE_PREFIX + (el.id || 'panel');
+}
+
+function readRunStatsPanelLayout(el){
+  try {
+    return JSON.parse(localStorage.getItem(runStatsPanelStorageKey(el)) || 'null');
+  } catch (_) {
+    return null;
+  }
+}
+
+function writeRunStatsPanelLayout(el){
+  if(!el) return;
+  const r = el.getBoundingClientRect();
+  try {
+    localStorage.setItem(runStatsPanelStorageKey(el), JSON.stringify({
+      x: Math.round(r.left),
+      y: Math.round(r.top)
+    }));
+  } catch (_) {}
+}
+
+function clampRunStatsPanelPosition(el, x, y){
+  const r = el.getBoundingClientRect();
+  const pad = 10;
+  return {
+    x: clamp(x, pad, Math.max(pad, innerWidth - r.width - pad)),
+    y: clamp(y, pad, Math.max(pad, innerHeight - r.height - pad))
+  };
+}
+
+function applyRunStatsPanelLayout(el, layout){
+  if(!el || !layout) return;
+  const next = clampRunStatsPanelPosition(el, layout.x, layout.y);
+  el.style.left = next.x + 'px';
+  el.style.top = next.y + 'px';
+  el.style.bottom = 'auto';
+}
+
+function setupRunStatsPanelDrag(el){
+  if(!el || el.dataset.dragReady) return;
+  el.dataset.dragReady = '1';
+  applyRunStatsPanelLayout(el, readRunStatsPanelLayout(el));
+
+  let drag = null;
+  function stopDragEvent(e){
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  function beginDrag(e){
+    if(!e.target.closest('.runlog-head')) return;
+    stopDragEvent(e);
+    const r = el.getBoundingClientRect();
+    drag = {
+      startX: e.clientX,
+      startY: e.clientY,
+      x: r.left,
+      y: r.top
+    };
+    if(e.pointerId != null && el.setPointerCapture) el.setPointerCapture(e.pointerId);
+  }
+  function moveDrag(e){
+    if(!drag) return;
+    stopDragEvent(e);
+    const next = clampRunStatsPanelPosition(el, drag.x + e.clientX - drag.startX, drag.y + e.clientY - drag.startY);
+    el.style.left = next.x + 'px';
+    el.style.top = next.y + 'px';
+    el.style.bottom = 'auto';
+  }
+  function endDrag(e){
+    if(!drag) return;
+    stopDragEvent(e);
+    drag = null;
+    writeRunStatsPanelLayout(el);
+  }
+
+  el.addEventListener('mousedown', e=>{
+    if(drag){ stopDragEvent(e); return; }
+    beginDrag(e);
+  });
+  addEventListener('mousemove', moveDrag);
+  addEventListener('mouseup', endDrag);
+  el.addEventListener('pointerdown', beginDrag);
+  el.addEventListener('pointermove', moveDrag);
+  el.addEventListener('pointerup', endDrag);
+  el.addEventListener('pointercancel', endDrag);
+  addEventListener('resize', ()=>{
+    const r = el.getBoundingClientRect();
+    applyRunStatsPanelLayout(el, {x:r.left, y:r.top});
+    writeRunStatsPanelLayout(el);
   });
 }
 
