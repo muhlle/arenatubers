@@ -2,7 +2,7 @@
 /* =========================================================
    COMBAT
 ========================================================= */
-const CRIT_DAMAGE_MULT = 1.4;
+const CRIT_DAMAGE_MULT = 2.0;
 
 function playerSwing(){
   const p = G.player;

@@ -131,7 +131,7 @@ const POWERUP_DETAILS = {
   crit:{
     current:c=>`+${c*8}% crit chance`,
     next:c=>`+${(c+1)*8}% crit chance`,
-    scale:'+8 percentage points crit chance per stack. Critical hits deal 140% total damage.',
+    scale:'+8 percentage points crit chance per stack. Critical hits deal 200% total damage.',
     syn:'Great with high-hit builds: Whirlwind, Multishot bolts, Bone Shield and cleaves.'
   },
   leech:{
