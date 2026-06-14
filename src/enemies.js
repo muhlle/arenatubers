@@ -64,75 +64,75 @@ const TYPE_WAVE_CAPS = {
 
 const WAVE_PACKS = {
   fodder: {
-    nm:'Fodder Rush', weight:12, minWave:1, maxSize:7,
+    nm:'Fodder Rush', weight:12, minWave:1, maxSize:9,
     slots:[
-      { roles:['swarm'], count:[3,5] },
-      { roles:['melee'], count:[1,2], chance:0.65 },
+      { roles:['swarm'], count:[4,7] },
+      { roles:['melee'], count:[1,3], chance:0.70 },
     ],
   },
   meleeLine: {
-    nm:'Melee Line', weight:9, minWave:1, maxSize:6,
+    nm:'Melee Line', weight:9, minWave:1, maxSize:8,
     slots:[
-      { roles:['melee'], count:[2,4] },
-      { roles:['swarm','chaser'], count:[1,2], chance:0.75 },
+      { roles:['melee'], count:[3,5] },
+      { roles:['swarm','chaser'], count:[2,3], chance:0.78 },
     ],
   },
   runnerFlank: {
-    nm:'Runner Flank', weight:8, minWave:2, maxSize:6,
+    nm:'Runner Flank', weight:8, minWave:2, maxSize:8,
     slots:[
-      { roles:['chaser'], count:[2,4] },
-      { roles:['swarm'], count:[1,2], chance:0.70 },
+      { roles:['chaser'], count:[3,5] },
+      { roles:['swarm'], count:[2,3], chance:0.75 },
     ],
   },
   rangedEscort: {
-    nm:'Ranged Escort', weight:7, minWave:3, maxSize:5,
+    nm:'Ranged Escort', weight:7, minWave:3, maxSize:7,
     slots:[
       { roles:['caster','ranged','ranged_poison'], count:[1,2] },
-      { roles:['swarm','melee'], count:[2,3] },
+      { roles:['swarm','melee'], count:[3,5] },
     ],
   },
   bruiserGuard: {
-    nm:'Bruiser Guard', weight:6, minWave:4, maxSize:5,
+    nm:'Bruiser Guard', weight:6, minWave:4, maxSize:7,
     slots:[
       { roles:['heavy','heavy_control'], count:[1,1] },
-      { roles:['melee','swarm'], count:[2,4] },
+      { roles:['melee','swarm'], count:[3,6] },
     ],
   },
   volatileRush: {
-    nm:'Volatile Rush', weight:4, minWave:5, maxSize:5,
+    nm:'Volatile Rush', weight:4, minWave:5, maxSize:7,
     slots:[
       { roles:['suicide'], count:[1,2] },
-      { roles:['chaser','swarm'], count:[2,3] },
+      { roles:['chaser','swarm'], count:[3,5] },
     ],
   },
   hazardTrail: {
-    nm:'Hazard Trail', weight:5, minWave:6, maxSize:5,
+    nm:'Hazard Trail', weight:5, minWave:6, maxSize:7,
     slots:[
       { roles:['hazard','control'], count:[1,2] },
-      { roles:['melee','swarm'], count:[2,3] },
+      { roles:['melee','swarm'], count:[3,5] },
     ],
   },
   supportGuard: {
-    nm:'Support Guard', weight:4, minWave:8, maxSize:5,
+    nm:'Support Guard', weight:4, minWave:8, maxSize:7,
     slots:[
       { roles:['support_summon','support_aura'], count:[1,1] },
-      { roles:['melee','heavy'], count:[1,2] },
-      { roles:['swarm'], count:[1,2], chance:0.60 },
+      { roles:['melee','heavy'], count:[2,3] },
+      { roles:['swarm'], count:[2,3], chance:0.65 },
     ],
   },
   ambushPack: {
-    nm:'Ambush Pack', weight:5, minWave:7, maxSize:5,
+    nm:'Ambush Pack', weight:5, minWave:7, maxSize:7,
     slots:[
       { roles:['leaper','ambusher'], count:[1,2] },
-      { roles:['chaser','swarm'], count:[2,3] },
+      { roles:['chaser','swarm'], count:[3,5] },
     ],
   },
   riftNest: {
-    nm:'Rift Nest', weight:3, minWave:9, maxSize:5,
+    nm:'Rift Nest', weight:3, minWave:9, maxSize:7,
     slots:[
       { roles:['turret_spawner'], count:[1,1] },
-      { roles:['swarm','melee'], count:[2,3] },
-      { roles:['caster','ranged'], count:[1,1], chance:0.45 },
+      { roles:['swarm','melee'], count:[3,5] },
+      { roles:['caster','ranged'], count:[1,2], chance:0.45 },
     ],
   },
   treasureRunner: {
@@ -142,28 +142,28 @@ const WAVE_PACKS = {
     ],
   },
   spiderSwarm: {
-    nm:'Spider Swarm', weight:12, minWave:1, mapOnly:'darklands', maxSize:7,
+    nm:'Spider Swarm', weight:12, minWave:1, mapOnly:'darklands', maxSize:10,
     slots:[
-      { roles:['swarm','chaser'], tags:['spider'], count:[4,6] },
+      { roles:['swarm','chaser'], tags:['spider'], count:[5,8] },
       { roles:['control'], tags:['spider'], count:[1,1], chance:0.35 },
     ],
   },
   venomWeb: {
-    nm:'Venom Web', weight:7, minWave:3, mapOnly:'darklands', maxSize:6,
+    nm:'Venom Web', weight:7, minWave:3, mapOnly:'darklands', maxSize:8,
     slots:[
       { roles:['ranged_poison','hazard','control'], tags:['spider'], count:[1,3] },
-      { roles:['swarm','chaser'], tags:['spider'], count:[2,3] },
+      { roles:['swarm','chaser'], tags:['spider'], count:[3,5] },
     ],
   },
   broodGuard: {
-    nm:'Brood Guard', weight:4, minWave:12, mapOnly:'darklands', maxSize:6,
+    nm:'Brood Guard', weight:4, minWave:12, mapOnly:'darklands', maxSize:8,
     slots:[
       { roles:['spawner'], tags:['spider'], count:[1,1] },
-      { roles:['swarm','control'], tags:['spider'], count:[3,5] },
+      { roles:['swarm','control'], tags:['spider'], count:[4,7] },
     ],
   },
   shadowWeb: {
-    nm:'Shadow Web', weight:4, minWave:9, mapOnly:'darklands', maxSize:5,
+    nm:'Shadow Web', weight:4, minWave:9, mapOnly:'darklands', maxSize:7,
     slots:[
       { roles:['ambusher','caster'], tags:['spider'], count:[1,2] },
       { roles:['control','heavy'], tags:['spider'], count:[1,2] },
@@ -230,7 +230,7 @@ Object.keys(WAVE_PACKS).forEach(id=>{ WAVE_PACKS[id].id=id; });
 
 const ACT_PROFILES = {
   early: {
-    id:'early', nm:'Early Act', threatMul:0.88, packSizeMul:0.85,
+    id:'early', nm:'Early Act', threatMul:0.88, packSizeMul:0.95,
     roleCaps:{
       caster:0.08, ranged:0.08, ranged_poison:0.08,
       heavy:0.10, heavy_control:0.04,
@@ -252,7 +252,7 @@ const ACT_PROFILES = {
     },
   },
   mid: {
-    id:'mid', nm:'Mid Act', threatMul:1.0, packSizeMul:1.0,
+    id:'mid', nm:'Mid Act', threatMul:1.0, packSizeMul:1.15,
     roleCaps:{
       caster:0.12, ranged:0.12, ranged_poison:0.12,
       heavy:0.16, heavy_control:0.07,
@@ -274,7 +274,7 @@ const ACT_PROFILES = {
     },
   },
   late: {
-    id:'late', nm:'Late Act', threatMul:1.12, packSizeMul:1.12,
+    id:'late', nm:'Late Act', threatMul:1.12, packSizeMul:1.28,
     roleCaps:{
       caster:0.16, ranged:0.16, ranged_poison:0.16,
       heavy:0.20, heavy_control:0.10,
@@ -605,8 +605,8 @@ function buildPackSpawnPlans(pack,d){
         elite:false,
         packId,
         packName:pack.nm,
-        spawnAngle:angle+rand(-0.08,0.08),
-        spawnDepth:rand(0,90),
+        spawnAngle:angle+rand(-0.14,0.14),
+        spawnDepth:rand(0,180),
       });
     }
   }
@@ -663,22 +663,51 @@ function recordDirectedWaveSpawn(type,d){
 }
 
 // ---- SPAWN -----------------------------------------------
-/* Directional spawn bias.
-   75% of spawns appear on the side the player is moving AWAY from (opposite
-   their movement direction); 25% spawn anywhere around them. The angle is
-   measured on the arena rim around the world origin, so a point projected
-   far "behind" the player resolves to a rim direction on that side. */
-function biasedSpawnAngle(){
+const SPAWN_BEHIND_CHANCE = 0.90;
+const SPAWN_BEHIND_SPREAD = 0.55;
+const SPAWN_SAFE_ARC_SPREAD = 1.35;
+const ADAPTIVE_SPAWN_ARENA_R = 4000;
+const ADAPTIVE_SPAWN_EDGE_LERP = 0.50;
+const ADAPTIVE_SPAWN_MIN_PLAYER_DIST = 1050;
+
+function spawnAngleBehindPlayer(spread){
   const p = (typeof G!=='undefined' && G) ? G.player : null;
   if(!p) return Math.random()*TAU;
   const moveA = (typeof p.moveAngle==='number') ? p.moveAngle : (p.facing||0);
-  if(Math.random() < 0.75){
-    const r = getArenaR();
-    const bx = p.x + Math.cos(moveA+Math.PI)*r;
-    const by = p.y + Math.sin(moveA+Math.PI)*r;
-    return Math.atan2(by, bx) + rand(-0.45, 0.45);
+  const r = getArenaR();
+  const bx = p.x + Math.cos(moveA+Math.PI)*r;
+  const by = p.y + Math.sin(moveA+Math.PI)*r;
+  return Math.atan2(by, bx) + rand(-spread, spread);
+}
+
+/* Directional spawn bias.
+   Most spawns appear on the side the player is moving AWAY from. The rest use
+   a wider back/side arc instead of pure random, so large packs should not pop
+   directly in the direction the player is kiting toward. */
+function biasedSpawnAngle(){
+  if(Math.random() < SPAWN_BEHIND_CHANCE) return spawnAngleBehindPlayer(SPAWN_BEHIND_SPREAD);
+  return spawnAngleBehindPlayer(SPAWN_SAFE_ARC_SPREAD);
+}
+
+function adaptiveSpawnRadius(angle, def, spawnDepth){
+  const arenaR = getArenaR();
+  const rimR = arenaR - def.r - 12 - spawnDepth;
+  const p = (typeof G!=='undefined' && G) ? G.player : null;
+  if(!p || arenaR < ADAPTIVE_SPAWN_ARENA_R) return rimR;
+
+  const playerR = Math.hypot(p.x, p.y);
+  let spawnR = playerR + (rimR - playerR) * ADAPTIVE_SPAWN_EDGE_LERP;
+  spawnR = clamp(spawnR, Math.min(rimR, playerR + 900), rimR);
+
+  for(let i=0;i<6;i++){
+    const sx = Math.cos(angle) * spawnR;
+    const sy = Math.sin(angle) * spawnR;
+    const d = Math.hypot(sx - p.x, sy - p.y);
+    if(d >= ADAPTIVE_SPAWN_MIN_PLAYER_DIST) break;
+    spawnR = Math.min(rimR, spawnR + (ADAPTIVE_SPAWN_MIN_PLAYER_DIST - d) + 80);
+    if(spawnR >= rimR) break;
   }
-  return Math.random()*TAU;
+  return spawnR;
 }
 
 /* True when an enemy is well outside the player's visible screen
@@ -693,11 +722,10 @@ function enemyOffscreen(e){
 function spawnEnemy(type,isElite,opts){
   const def=ETYPES[type];
   if(!def) return null;
-  const arenaR=getArenaR();
   opts=opts||{};
   const angle=(Number.isFinite(opts.spawnAngle)?opts.spawnAngle:biasedSpawnAngle());
   const spawnDepth=Number.isFinite(opts.spawnDepth)?opts.spawnDepth:0;
-  const spawnR=arenaR-def.r-12-spawnDepth;
+  const spawnR=adaptiveSpawnRadius(angle, def, spawnDepth);
   const ws=1+(G.wave-1)*0.07;
   const e={
     type,boss:false,elite:!!(isElite),

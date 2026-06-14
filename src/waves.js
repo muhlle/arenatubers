@@ -31,6 +31,11 @@ function waveCap(w){
 function waveSpawnInterval(w){
   return Math.max(0.11, 0.72 - w*0.022);
 }
+function waveSpawnBurstCount(w){
+  if(w>=21) return 4;
+  if(w>=10) return 3;
+  return 2;
+}
 function checkpointType(w){
   if(w===getFinalWave()) return 'final';
   if(w===25) return 'champion';
