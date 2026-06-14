@@ -1975,6 +1975,7 @@ function boot(){
   $('btnMapBack')     && ($('btnMapBack').onclick     = ()=>{ openScreen('charselect'); });
   $('btnTalents').onclick = ()=>{ openScreen('talents'); renderTalents(); };
   $('btnTalentsBack') && ($('btnTalentsBack').onclick = ()=>{ openScreen('menu'); });
+  $('btnResetTalents') && ($('btnResetTalents').onclick = ()=>{ resetTalents(); });
   $('btnResume') && ($('btnResume').onclick = ()=>{ closeScreens(); state=ST.PLAY; lastT=performance.now(); });
   $('btnExit')   && ($('btnExit').onclick   = ()=>{ toMenu(); });
   $('btnAgain')  && ($('btnAgain').onclick  = ()=>{ unlockAudio(); startRun(selectedMap); });

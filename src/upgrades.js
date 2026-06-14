@@ -2,14 +2,19 @@
 /* ---------------- Persistent session data ---------------- */
 const meta = { voidcores: 0 };
 const TALENTS = [
-  {id:'brut', nm:'Brutality',  ds:'+10% weapon damage per rank.',        max:3, cost:1, ic:'🗡'},
-  {id:'vita', nm:'Vitality',   ds:'+15% maximum health per rank.',       max:3, cost:1, ic:'❤'},
-  {id:'swft', nm:'Swiftness',  ds:'+8% movement speed per rank.',        max:2, cost:1, ic:'👟'},
-  {id:'focs', nm:'Focus',      ds:'-10% ability cooldowns per rank.',    max:2, cost:1, ic:'⏳'},
-  {id:'gred', nm:'Greed',      ds:'+15% experience gained per rank.',    max:2, cost:1, ic:'✦'},
-  {id:'rage', nm:'Giant Blades', ds:'+18% sword reach. The cleave grows hungrier.', max:1, cost:2, ic:'⚔'},
-  {id:'pull', nm:'Graviton Pull', ds:'+20 pickup radius per rank.',               max:4, cost:1, ic:'🧲'},
-  {id:'wolf', nm:'Wolf Companion', ds:'Rank 1: summons a wolf that hunts ranged enemies. Rank 2-3: +damage and +range.', max:3, cost:2, ic:'🐺'},
+  {id:'brut', path:'blade', tier:1, nm:'Brutality',  ds:'+10% weapon damage per rank.',        max:3, cost:1, ic:'🗡'},
+  {id:'rage', path:'blade', tier:2, req:[{id:'brut', rank:2}], nm:'Giant Blades', ds:'+18% sword reach. The cleave grows hungrier.', max:1, cost:2, ic:'⚔'},
+  {id:'wolf', path:'blade', tier:3, req:[{id:'rage', rank:1}], nm:'Wolf Companion', ds:'Rank 1: summons a wolf that hunts ranged enemies. Rank 2-3: +damage and +range.', max:3, cost:2, ic:'🐺'},
+  {id:'vita', path:'endurance', tier:1, nm:'Vitality',   ds:'+15% maximum health per rank.',       max:3, cost:1, ic:'❤'},
+  {id:'focs', path:'endurance', tier:2, req:[{id:'vita', rank:2}], nm:'Focus',      ds:'-10% ability cooldowns per rank.',    max:2, cost:1, ic:'⏳'},
+  {id:'swft', path:'endurance', tier:3, req:[{id:'focs', rank:1}], nm:'Swiftness',  ds:'+8% movement speed per rank.',        max:2, cost:1, ic:'👟'},
+  {id:'pull', path:'hunt', tier:1, nm:'Graviton Pull', ds:'+20 pickup radius per rank.',               max:4, cost:1, ic:'🧲'},
+  {id:'gred', path:'hunt', tier:2, req:[{id:'pull', rank:2}], nm:'Greed',      ds:'+15% experience gained per rank.',    max:2, cost:1, ic:'✦'},
+];
+const TALENT_PATHS = [
+  {id:'blade', nm:'Blade', ds:'Damage, reach, and companion pressure.'},
+  {id:'endurance', nm:'Endurance', ds:'Health, cooldown control, and movement.'},
+  {id:'hunt', nm:'Hunt', ds:'Pickup control and faster long-term scaling.'},
 ];
 const talentRanks = {}; TALENTS.forEach(t=>talentRanks[t.id]=0);
 const tval = id => talentRanks[id];
