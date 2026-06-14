@@ -119,6 +119,7 @@
       devTools.open = false;
       devTools.godmode = false;
       devTools.speed = 1;
+      devTools.spawnRate = 1;
     }
     if(typeof syncDevToolsPanel === 'function') syncDevToolsPanel();
     TALENTS.forEach(t=>{ talentRanks[t.id]=0; });

@@ -36,7 +36,7 @@ const ST = { MENU:0, PLAY:1, PAUSE:2, LEVELUP:3, OVER:4, WIN:5 };
 let state = ST.MENU;
 let G = null;        // current run
 let shakeT = 0, shakeMag = 0;
-const devTools = { open:false, godmode:false, speed:1 };
+const devTools = { open:false, godmode:false, speed:1, spawnRate:1 };
 
 /* ---------------- Input ---------------- */
 const keys = {};
@@ -91,6 +91,10 @@ function syncDevToolsPanel(){
   const speedValue = $('devSpeedValue');
   if(speed && Number(speed.value) !== devTools.speed) speed.value = String(devTools.speed);
   if(speedValue) speedValue.textContent = devTools.speed.toFixed(1) + 'x';
+  const spawnRate = $('devSpawnRate');
+  const spawnRateValue = $('devSpawnRateValue');
+  if(spawnRate && Number(spawnRate.value) !== devTools.spawnRate) spawnRate.value = String(devTools.spawnRate);
+  if(spawnRateValue) spawnRateValue.textContent = devTools.spawnRate.toFixed(2).replace(/\.?0+$/, '') + 'x';
 }
 
 function toggleDevTools(){
@@ -144,6 +148,11 @@ function bindDevTools(){
   const speed = $('devSpeed');
   if(speed) speed.oninput = ()=>{
     devTools.speed = clamp(Number(speed.value) || 1, 1, 10);
+    syncDevToolsPanel();
+  };
+  const spawnRate = $('devSpawnRate');
+  if(spawnRate) spawnRate.oninput = ()=>{
+    devTools.spawnRate = clamp(Number(spawnRate.value) || 1, 0.25, 5);
     syncDevToolsPanel();
   };
   syncDevToolsPanel();
@@ -569,7 +578,8 @@ function update(dt){
     G.spawnT -= dt;
     const capRoom = Math.max(0, G.maxEnemies - G.enemies.length);
     if(G.toSpawn>0 && capRoom>0 && G.spawnT<=0){
-      G.spawnT = waveSpawnInterval(G.wave);
+      const spawnRate = typeof devTools !== 'undefined' ? devTools.spawnRate : 1;
+      G.spawnT = waveSpawnInterval(G.wave) / Math.max(0.25, spawnRate);
       const burstCount = typeof waveSpawnBurstCount === 'function' ? waveSpawnBurstCount(G.wave) : (G.wave >= 20 ? 2 : 1);
       const toSpawnNow = Math.min(burstCount, G.toSpawn, capRoom);
       for(let bi=0; bi<toSpawnNow; bi++){
