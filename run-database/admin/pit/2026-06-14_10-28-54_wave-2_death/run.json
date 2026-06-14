@@ -1,0 +1,144 @@
+{
+  "version": 1,
+  "runId": "2026-06-14T10-28-08-596Z-ds1pp9",
+  "playerName": "admin",
+  "characterId": "warlock",
+  "mapId": "pit",
+  "mapName": "THE PIT",
+  "startedAt": "2026-06-14T10:28:08.596Z",
+  "endedAt": "2026-06-14T10:28:54.415Z",
+  "durationSec": 45.8,
+  "result": "death",
+  "waveReached": 2,
+  "finalWave": 10,
+  "levelReached": 1,
+  "playerStart": {
+    "maxhp": 85,
+    "baseDmg": 10,
+    "speed": 235,
+    "armor": 0.05,
+    "crit": 0.05,
+    "reach": 1,
+    "atkSpd": 1
+  },
+  "totals": {
+    "damageDone": 1122,
+    "damageTaken": 97,
+    "hitsTaken": 10,
+    "kills": 31,
+    "powerups": 0,
+    "items": 0,
+    "xpGained": 0
+  },
+  "damageDone": {
+    "warlock.shadow_bolt": {
+      "id": "warlock.shadow_bolt",
+      "name": "Shadow Bolt",
+      "kind": "warlock",
+      "total": 1122,
+      "hits": 51,
+      "crits": 2,
+      "max": 22,
+      "dmgType": "shadow",
+      "targets": {
+        "imp": {
+          "id": "imp",
+          "name": "Imp",
+          "total": 506,
+          "hits": 23,
+          "crits": 1,
+          "max": 22
+        },
+        "grunt": {
+          "id": "grunt",
+          "name": "Grunt",
+          "total": 616,
+          "hits": 28,
+          "crits": 1,
+          "max": 22
+        }
+      }
+    }
+  },
+  "damageTaken": {
+    "imp:melee": {
+      "id": "imp:melee",
+      "enemyType": "imp",
+      "enemyName": "Imp",
+      "attack": "melee",
+      "total": 17.099999999999998,
+      "hits": 3,
+      "max": 5.699999999999999
+    },
+    "grunt:melee": {
+      "id": "grunt:melee",
+      "enemyType": "grunt",
+      "enemyName": "Grunt",
+      "attack": "melee",
+      "total": 79.79999999999998,
+      "hits": 7,
+      "max": 11.399999999999999
+    }
+  },
+  "kills": {
+    "imp": {
+      "id": "imp",
+      "name": "Imp",
+      "count": 23,
+      "elites": 0,
+      "bosses": 0,
+      "exp": 92
+    },
+    "grunt": {
+      "id": "grunt",
+      "name": "Grunt",
+      "count": 8,
+      "elites": 0,
+      "bosses": 0,
+      "exp": 64
+    }
+  },
+  "choices": [],
+  "levelUps": [],
+  "waves": [
+    {
+      "wave": 1,
+      "t": 0,
+      "checkpoint": "",
+      "theme": "Pit Skirmish",
+      "budget": 53,
+      "cap": 40
+    },
+    {
+      "wave": 2,
+      "t": 36.6,
+      "checkpoint": "",
+      "theme": "Meat Grinder",
+      "budget": 56,
+      "cap": 40
+    }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "wave": 0,
+      "level": 1,
+      "type": "run_start",
+      "data": {
+        "mapId": "pit",
+        "characterId": "warlock"
+      }
+    },
+    {
+      "t": 45.8,
+      "wave": 2,
+      "level": 1,
+      "type": "run_end",
+      "data": {
+        "result": "death",
+        "waveReached": 2,
+        "levelReached": 1
+      }
+    }
+  ]
+}

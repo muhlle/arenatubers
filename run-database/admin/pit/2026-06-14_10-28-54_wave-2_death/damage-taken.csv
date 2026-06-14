@@ -1,0 +1,3 @@
+enemy,enemyType,attack,damage,hits,avg,max
+Grunt,grunt,melee,80,7,11,11
+Imp,imp,melee,17,3,6,6

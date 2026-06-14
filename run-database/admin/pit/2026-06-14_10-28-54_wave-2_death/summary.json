@@ -1,0 +1,22 @@
+{
+  "runId": "2026-06-14T10-28-08-596Z-ds1pp9",
+  "playerName": "admin",
+  "characterId": "warlock",
+  "mapId": "pit",
+  "mapName": "THE PIT",
+  "startedAt": "2026-06-14T10:28:08.596Z",
+  "endedAt": "2026-06-14T10:28:54.415Z",
+  "durationSec": 45.8,
+  "result": "death",
+  "waveReached": 2,
+  "finalWave": 10,
+  "levelReached": 1,
+  "damageDone": 1122,
+  "damageTaken": 97,
+  "hitsTaken": 10,
+  "kills": 31,
+  "powerups": 0,
+  "items": 0,
+  "xpGained": 0,
+  "folder": "admin/pit/2026-06-14_10-28-54_wave-2_death"
+}

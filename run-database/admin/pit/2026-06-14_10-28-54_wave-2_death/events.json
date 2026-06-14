@@ -1,0 +1,23 @@
+[
+  {
+    "t": 0,
+    "wave": 0,
+    "level": 1,
+    "type": "run_start",
+    "data": {
+      "mapId": "pit",
+      "characterId": "warlock"
+    }
+  },
+  {
+    "t": 45.8,
+    "wave": 2,
+    "level": 1,
+    "type": "run_end",
+    "data": {
+      "result": "death",
+      "waveReached": 2,
+      "levelReached": 1
+    }
+  }
+]

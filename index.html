@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GRUKK — Arena Survivors</title>
+<link rel="stylesheet" href="style.css?v=20260614-hpbar">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="topleft"><div id="wavebig"><span id="wavenum">WAVE 1</span><span id="wavetimer"></span></div><div class="sub" id="enemiesleft">ENEMIES 0</div><div class="sub" id="killcount">KILLS 0</div></div>
+  <div id="bossbar"><div class="bname" id="bossname">VORGUL THE UNMAKER</div><div class="bar"><div class="fill" id="bossfill"></div></div></div>
+  <div id="announce"></div>
+  <div class="bars">
+    <div id="lvltxt">LV 1</div>
+    <div id="buffbar"></div>
+    <div class="bar hp"><div class="fill" id="hpfill"></div><div class="txt" id="hptxt">100 / 100</div></div>
+    <div class="bar xp"><div class="fill" id="xpfill"></div><div class="txt" id="xptxt"></div></div>
+  </div>
+  <div id="items"></div>
+  <div id="statview"></div>
+  <div id="abilities">
+    <div class="ab ab-passive" id="abP" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 3c0 0-5 5-5 9a5 5 0 0010 0c0-4-5-9-5-9z" fill="#c840ff" stroke="#e8a0ff" stroke-width="1.2"/><path d="M12 10c0 0-2.5 2-2.5 4a2.5 2.5 0 005 0c0-2-2.5-4-2.5-4z" fill="#ff80ff"/></svg>
+      <div class="pstack"></div>
+      <div class="key">PSV</div>
+    </div>
+    <div class="ab" id="abQ"><svg viewBox="0 0 24 24" fill="none" stroke="#ff9a5c" stroke-width="2"><path d="M12 3v4M5 7l2.5 2.5M19 7l-2.5 2.5M12 9c-3 0-5 2.4-5 5.5C7 18 9 21 12 21s5-3 5-6.5C17 11.4 15 9 12 9z" fill="#ff6b35" stroke="#ffcf9a"/></svg><div class="cd"></div><div class="cdt"></div><div class="key">Q</div></div>
+    <div class="ab" id="abE"><svg viewBox="0 0 24 24"><path d="M12 2L9 9H4l6 5-2.5 8L12 17l4.5 5L14 14l6-5h-5z" fill="#ffd75c" stroke="#fff0c0" stroke-width="1"/></svg><div class="cd"></div><div class="cdt"></div><div class="key">E</div></div>
+    <div class="ab" id="abR"><svg viewBox="0 0 24 24" fill="none" stroke="#9adcff" stroke-width="2.2" stroke-linecap="round"><path d="M12 12m-8 0a8 8 0 1 1 16 0" /><path d="M20 12l2-3M20 12l-3-1.5"/><path d="M12 12m-4 0a4 4 0 1 0 8 0" stroke="#d8f1ff"/></svg><div class="cd"></div><div class="cdt"></div><div class="key">R</div></div>
+    <div class="ab" id="abS"><svg viewBox="0 0 24 24" fill="none" stroke="#b8ffb0" stroke-width="2.4" stroke-linecap="round"><path d="M3 12h11M10 6l7 6-7 6" /><path d="M17 5l4 7-4 7" stroke="#e6ffe0"/></svg><div class="cd"></div><div class="cdt"></div><div class="key">SPACE</div></div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<div id="charselect" class="screen">
+  <h2 class="charselect-title">CHOOSE YOUR CHAMPION</h2>
+  <div id="charcards"></div>
+  <div class="charselect-actions">
+    <div class="btn" id="btnConfirmChar">CHOOSE MAP →</div>
+    <div class="btn small" id="btnCharBack" style="opacity:0.65;margin-top:6px">BACK</div>
+  </div>
+</div>
+
+<div id="mapselect" class="screen">
+  <h2 class="mapselect-title">CHOOSE YOUR ARENA</h2>
+  <div id="mapcards"></div>
+  <div class="mapselect-actions">
+    <div class="btn" id="btnMapStart">ENTER THE ARENA</div>
+    <div class="btn small" id="btnMapBack" style="opacity:0.65;margin-top:6px">← BACK</div>
+  </div>
+</div>
+
+<div id="loginscreen" class="screen show">
+  <h1 class="title">GRUKK</h1>
+  <div class="subtitle">ARENA SURVIVORS</div>
+  <div class="login-box">
+    <div class="login-tabs">
+      <div class="ltab active" id="ltabLogin">LOGIN</div>
+      <div class="ltab" id="ltabReg">REGISTER</div>
+    </div>
+    <div id="loginForm">
+      <input type="text" id="loginUser" placeholder="Username" class="login-input" autocomplete="username">
+      <input type="password" id="loginPass" placeholder="Password" class="login-input" autocomplete="current-password">
+      <div class="btn" id="btnLogin">ENTER ARENA</div>
+      <div class="login-err" id="loginErr"></div>
+    </div>
+    <div id="regForm" style="display:none">
+      <input type="text" id="regUser" placeholder="Username" class="login-input" autocomplete="username">
+      <input type="password" id="regPass" placeholder="Password" class="login-input" autocomplete="new-password">
+      <div class="btn" id="btnReg">CREATE ACCOUNT</div>
+      <div class="login-err" id="regErr"></div>
+    </div>
+  </div>
+</div>
+
+<div id="menu" class="screen">
+  <h1 class="title">GRUKK</h1>
+  <div class="subtitle">ARENA SURVIVORS</div>
+  <div id="menuUser" style="font-family:Impact;font-size:20px;letter-spacing:3px;color:#e8b64c;text-shadow:0 0 12px rgba(232,182,76,.5);margin-bottom:14px"></div>
+  <div class="btn" id="btnPlay">ENTER THE ARENA</div>
+  <div class="btn" id="btnTalents">TALENTS</div>
+  <div class="btn small" id="btnLogout" style="margin-top:6px;font-size:14px;opacity:0.7">LOG OUT</div>
+  <div class="controls-box">
+    <b>W A S D</b> move &nbsp;&nbsp; <b>MOUSE 1</b> attack combo (slash · slash · cleave)<br>
+    <b>Q</b> battle fury &nbsp;&nbsp; <b>E</b> ground slam &nbsp;&nbsp; <b>R</b> whirlwind &nbsp;&nbsp; <b>SPACE</b> charge &nbsp;&nbsp; <b>ESC</b> pause<br>
+    <span style="color:#7a6f5c">Bosses can drop <span class="voiddrop">◆ Voidcores</span> — spend them on Talents. (Progress lasts for this session.)</span>
+  </div>
+</div>
+
+<div id="talents" class="screen">
+  <div class="wrap">
+    <h2>TALENTS</h2>
+    <div class="cores" id="talentCores">◆ 0 VOIDCORES</div>
+    <div class="hint">Defeat a boss: <b style="color:#cbb8ff">75%</b> chance to drop a Voidcore, then <b style="color:#cbb8ff">24%</b> chance for a second.</div>
+    <div class="tgrid" id="tgrid"></div>
+    <div class="btn small" id="btnTalentsBack">BACK</div>
+  </div>
+</div>
+
+<div id="pause" class="screen">
+  <h2>PAUSED</h2>
+  <div id="pauseStats" class="run-stats-panel"></div>
+  <div class="btn" id="btnResume">RESUME</div>
+  <div class="btn" id="btnExit">EXIT TO MAIN MENU</div>
+</div>
+
+<div id="levelup" class="screen">
+  <h2>LEVEL UP!</h2>
+  <div style="color:#9d937e;letter-spacing:2px">CHOOSE A POWER</div>
+  <div class="cardrow" id="cardrow"></div>
+</div>
+
+<div id="gameover" class="screen">
+  <h2 style="color:#e8604c">YOU DIED</h2>
+  <div class="stats" id="gostats"></div>
+  <div id="gameoverRunStats" class="run-stats-panel"></div>
+  <div class="btn" id="btnAgain">FIGHT AGAIN</div>
+  <div class="btn" id="btnGoMenu">MAIN MENU</div>
+</div>
+
+<div id="victory" class="screen">
+  <h2>ARENA CLEARED</h2>
+  <div class="stats" id="vstats"></div>
+  <div id="victoryRunStats" class="run-stats-panel"></div>
+  <div class="btn" id="btnVictoryAgain">FIGHT AGAIN</div>
+  <div class="btn" id="btnVictoryMenu">MAIN MENU</div>
+</div>
+
+<script defer src="src/maps.js"></script>
+<script defer src="src/skeleton.js"></script>
+<script defer src="src/characters.js?v=20260614-boneshield-projectile"></script>
+<script defer src="src/warlock.js?v=20260614-boneshield-projectile"></script>
+<script defer src="src/events.js"></script>
+<script defer src="src/main.js?v=20260614-fix2"></script>
+<script defer src="src/run-logger.js"></script>
+<script defer src="src/upgrades.js?v=20260614-boneshield-projectile"></script>
+<script defer src="src/waves.js"></script>
+<script defer src="src/enemies.js"></script>
+<script defer src="src/player.js"></script>
+<script defer src="src/rendering-arena.js"></script>
+<script defer src="src/rendering.js?v=20260614-hpbar"></script>
+<script defer src="src/auth.js"></script>
+</body>
+</html>
