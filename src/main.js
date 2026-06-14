@@ -487,7 +487,7 @@ function update(dt){
     const capRoom = Math.max(0, G.maxEnemies - G.enemies.length);
     if(G.toSpawn>0 && capRoom>0 && G.spawnT<=0){
       G.spawnT = waveSpawnInterval(G.wave);
-      const burstCount = G.wave >= 20 ? 2 : 1;
+      const burstCount = typeof waveSpawnBurstCount === 'function' ? waveSpawnBurstCount(G.wave) : (G.wave >= 20 ? 2 : 1);
       const toSpawnNow = Math.min(burstCount, G.toSpawn, capRoom);
       for(let bi=0; bi<toSpawnNow; bi++){
         let plan = typeof chooseDirectedWaveSpawn === 'function' ? chooseDirectedWaveSpawn(G.waveDirector) : null;
