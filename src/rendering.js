@@ -1884,7 +1884,7 @@ function updateHUD(){
   $('hpfill').style.background = 'linear-gradient(#ff5a4d,#c72d25)';
   $('hptxt').textContent   = Math.ceil(p.hp)+' / '+p.maxhp;
   $('xpfill').style.width  = clamp(p.xp/p.xpNext*100, 0, 100)+'%';
-  const xptEl=$('xptxt'); if(xptEl) xptEl.textContent=p.xp+' / '+p.xpNext+' XP';
+  const xptEl=$('xptxt'); if(xptEl) xptEl.textContent='';
   $('lvltxt').textContent  = 'LV '+p.level;
   const wnEl=$('wavenum'); if(wnEl) wnEl.textContent='WAVE '+G.wave; else $('wavebig').textContent='WAVE '+G.wave;
   const wtEl=$('wavetimer');
