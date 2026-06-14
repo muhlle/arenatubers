@@ -24,9 +24,7 @@ function waveDuration(w){
   return w>=21 ? 30 : 35;
 }
 function waveCap(w){
-  const cap = Math.round(clamp(25 + w*4, 40, 150));
-  if(w%5===0) return Math.round(clamp(45 + w*2, 55, 110));
-  return cap;
+  return Number.MAX_SAFE_INTEGER;
 }
 function waveSpawnInterval(w){
   return Math.max(0.11, 0.72 - w*0.022);
