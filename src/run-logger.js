@@ -555,7 +555,7 @@ function renderRunStats(targetId){
 
   el.innerHTML = `
     <div class="runlog-head">
-      <div><b>${runLogEscape(log.playerName)}</b><span>${runLogEscape(log.characterId)} / ${runLogEscape(log.mapName)}</span></div>
+      <div><b class="runlog-title">Damage breakdown</b><span>${runLogEscape(log.characterId)} / ${runLogEscape(log.mapName)}</span></div>
       <div class="runlog-pill">Wave ${log.waveReached} / Lv ${log.levelReached}</div>
     </div>
     <div class="runlog-kpis">
