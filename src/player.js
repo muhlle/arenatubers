@@ -207,6 +207,7 @@ function nukeEnemyAsh(e){
 function triggerNukeBomb(x, y){
   const victims = [...G.enemies];
   if(!G.screenFx) G.screenFx = {};
+  playSfx('bomb',1.05);
   if(!victims.length){
     shake(12,0.28);
     G.screenFx.nukeGray = Math.max(G.screenFx.nukeGray || 0, 0.42);

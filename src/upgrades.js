@@ -392,6 +392,7 @@ function queueLevelUp(){
   burst(p.x,p.y,'#5ab4ff',26,300,0.9,4);
   burst(p.x,p.y,'#ffd75c',14,220,0.8,3);
   ftext(p.x,p.y-50,'LEVEL UP!','#7cc4ff',20,1.4);
+  playSfx('levelUp',0.95);
   if(G.lvlAnim<=0){
     G.lvlAnim = 0.55;                       // the half-second flourish
     p.iframes = Math.max(p.iframes, 0.7);   // don't get chunked mid-celebration

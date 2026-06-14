@@ -600,6 +600,55 @@ function playSfx(name, power=1){
   } else if(name==='bladeCrit'){
     toneSweep({t, dur:0.18, gain:0.075*power, from:1180, to:410, type:'square'});
     noiseBurst({t:t+0.01, dur:0.09, gain:0.1*power, freq:2600, q:1.4, rate:1.6});
+  } else if(name==='whirlwind'){
+    noiseBurst({t, dur:0.34, gain:0.14*power, freq:1500, q:0.9, rate:1.6});
+    toneSweep({t, dur:0.22, gain:0.045*power, from:420, to:900, type:'triangle'});
+    toneSweep({t:t+0.06, dur:0.20, gain:0.035*power, from:900, to:340, type:'sine'});
+  } else if(name==='charge' || name==='dodge'){
+    noiseBurst({t, dur:0.18, gain:0.18*power, freq:2100, q:1.2, rate:1.8});
+    toneSweep({t, dur:0.12, gain:0.045*power, from:780, to:130, type:'triangle'});
+  } else if(name==='fury'){
+    toneSweep({t, dur:0.20, gain:0.055*power, from:180, to:560, type:'sawtooth'});
+    noiseBurst({t:t+0.02, dur:0.20, gain:0.12*power, freq:750, q:0.8, rate:0.9});
+  } else if(name==='groundSlam' || name==='slam'){
+    toneSweep({t, dur:0.18, gain:0.10*power, from:150, to:45, type:'sawtooth'});
+    noiseBurst({t:t+0.015, dur:0.30, gain:0.26*power, freq:420, q:0.55, type:'lowpass', rate:0.7});
+  } else if(name==='curse'){
+    toneSweep({t, dur:0.26, gain:0.07*power, from:620, to:120, type:'sine'});
+    noiseBurst({t:t+0.02, dur:0.22, gain:0.13*power, freq:620, q:1.6, rate:0.65});
+  } else if(name==='sigil'){
+    toneSweep({t, dur:0.12, gain:0.055*power, from:340, to:820, type:'triangle'});
+    noiseBurst({t:t+0.03, dur:0.18, gain:0.15*power, freq:1250, q:0.8, rate:1.2});
+    toneSweep({t:t+0.09, dur:0.22, gain:0.035*power, from:90, to:55, type:'sine'});
+  } else if(name==='boneShield'){
+    noiseBurst({t, dur:0.09, gain:0.12*power, freq:2200, q:2.4, rate:1.9});
+    noiseBurst({t:t+0.07, dur:0.12, gain:0.10*power, freq:1500, q:2.0, rate:1.5});
+    toneSweep({t, dur:0.26, gain:0.04*power, from:300, to:180, type:'triangle'});
+  } else if(name==='shadowStep'){
+    toneSweep({t, dur:0.10, gain:0.07*power, from:900, to:260, type:'sine'});
+    noiseBurst({t:t+0.01, dur:0.16, gain:0.16*power, freq:1800, q:1.8, rate:1.6});
+    toneSweep({t:t+0.10, dur:0.12, gain:0.045*power, from:180, to:520, type:'triangle'});
+  } else if(name==='fistsOfFury'){
+    for(let i=0;i<4;i++){
+      toneSweep({t:t+i*0.045, dur:0.055, gain:0.035*power, from:620+i*80, to:250+i*60, type:'square'});
+      noiseBurst({t:t+i*0.045, dur:0.045, gain:0.055*power, freq:2400+i*250, q:2.1, rate:1.8});
+    }
+  } else if(name==='speedBurst'){
+    noiseBurst({t, dur:0.18, gain:0.17*power, freq:2600, q:1.4, rate:2.0});
+    toneSweep({t, dur:0.14, gain:0.06*power, from:1200, to:360, type:'triangle'});
+  } else if(name==='magnet'){
+    toneSweep({t, dur:0.18, gain:0.055*power, from:260, to:760, type:'sine'});
+    toneSweep({t:t+0.035, dur:0.22, gain:0.045*power, from:520, to:1040, type:'triangle'});
+    noiseBurst({t:t+0.02, dur:0.18, gain:0.08*power, freq:1700, q:3.2, rate:1.1});
+  } else if(name==='levelUp'){
+    toneSweep({t, dur:0.12, gain:0.05*power, from:440, to:660, type:'sine'});
+    toneSweep({t:t+0.08, dur:0.14, gain:0.055*power, from:660, to:990, type:'sine'});
+    toneSweep({t:t+0.16, dur:0.18, gain:0.06*power, from:990, to:1320, type:'triangle'});
+    noiseBurst({t:t+0.04, dur:0.32, gain:0.09*power, freq:3000, q:1.5, rate:1.6});
+  } else if(name==='bomb'){
+    toneSweep({t, dur:0.22, gain:0.16*power, from:110, to:38, type:'sawtooth'});
+    noiseBurst({t:t+0.02, dur:0.42, gain:0.34*power, freq:360, q:0.45, type:'lowpass', rate:0.65});
+    noiseBurst({t:t+0.035, dur:0.16, gain:0.18*power, freq:1900, q:0.65, rate:0.9});
   }
 }
 
@@ -835,6 +884,7 @@ function update(dt){
         ftext(p.x,p.y-p.r-14,'+'+heal+' hp','#5ee06a',14,1);
         burst(pk.x,pk.y,'#5ee06a',12,200,0.6);
       } else if(pk.type==='magnet'){
+        playSfx('magnet',0.9);
         let xpTotal=0;
         G.pickups = G.pickups.filter(xp=>{ if(xp.type!=='xp') return true; xpTotal+=xp.baseExp||xp.value||0; return false; });
         if(xpTotal>0){

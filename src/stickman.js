@@ -78,7 +78,7 @@ function updateStickmanAbilities(dt){
       p.iframes      = Math.max(p.iframes, STICK.burstTime + 0.04);
       ftext(p.x,p.y-46,'BURST','#bfeeff',15,0.6);
       burst(p.x,p.y,'#9fe8ff',12,260,0.4,3);
-      playSfx('dodge',0.7);
+      playSfx('speedBurst',0.8);
     }
     if(p.burst.active>0){
       p.burst.active -= dt;
@@ -105,6 +105,7 @@ function updateStickmanAbilities(dt){
       p.fof.hits   = 0;
       p.fof.waves.length = 0;
       ftext(p.x,p.y-50,'FISTS OF FURY','#8fe6ff',16,0.7);
+      playSfx('fistsOfFury',0.85);
     }
     if(p.fof.active>0){
       p.fof.active -= dt;

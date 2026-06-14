@@ -362,7 +362,7 @@ function warlockBoneShield(){
   ftext(p.x, p.y-60, 'BONE SHIELD', '#c8c0a0', 20, 1.6);
   G.rings.push({x:p.x, y:p.y, r:10, maxR:BONE_SHIELD_R*1.1, life:0.4, maxlife:0.4, color:'190,182,155'});
   shake(5, 0.2);
-  playSfx('cleave', 0.9);
+  playSfx('boneShield', 0.9);
 }
 
 function updateBoneShield(dt){
@@ -543,7 +543,7 @@ function updateWarlockAbilities(dt){
     burst(p.x,p.y,'#8020e0',14,200,0.5,4);
     ftext(p.x,p.y-60,'CURSE','#b040ff',18,1.4);
     shake(4,0.15);
-    playSfx('cleave',0.6);
+    playSfx('curse',0.8);
   }
 
   // E — Burning Sigil (place at mouse world pos)
@@ -554,7 +554,7 @@ function updateWarlockAbilities(dt){
     G.sigils.push({x:wx,y:wy,r:SIGIL_R,life:5.0,maxlife:5.0,dps:22});
     burst(wx,wy,'#ff6020',12,150,0.45,4);
     ftext(wx,wy-50,'SIGIL','#ff7030',16,1.2);
-    playSfx('slam',0.7);
+    playSfx('sigil',0.8);
   }
 
   // R — Bone Shield
@@ -576,6 +576,6 @@ function updateWarlockAbilities(dt){
     p.iframes = 0.25;
         burst(p.x,p.y,'#b040ff',10,200,0.4,3);
     G.rings.push({x:p.x,y:p.y,r:10,maxR:80,life:0.3,maxlife:0.3,color:'180,40,255'});
-    playSfx('dodge',0.8);
+    playSfx('shadowStep',0.85);
   }
 }

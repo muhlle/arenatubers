@@ -58,6 +58,7 @@ function updateSkeletonAbilities(dt, mx, my){
     p.ww.tick = 0;
     p.swing = null;
     ftext(p.x, p.y-44, 'WHIRLWIND', '#ffcf9a', 16, 0.9);
+    playSfx('whirlwind',0.9);
   }
   if(p.ww.active>0){
     if(Math.random()<0.6) G.afterimages.push({x:p.x,y:p.y,facing:p.facing,alpha:0.45,life:0.14,maxlife:0.14,color:'#9adcff'});
@@ -92,6 +93,7 @@ function updateSkeletonAbilities(dt, mx, my){
     p.dash.dy = dy/l*1500;
     ftext(p.x,p.y-44,'CHARGE','#fff0c0',15,0.7);
     burst(p.x,p.y,'#bff5b0',10,200,0.4);
+    playSfx('charge',0.85);
   }
 
   // Q - Battle Fury.
@@ -100,6 +102,7 @@ function updateSkeletonAbilities(dt, mx, my){
     p.fury.active = 5;
     ftext(p.x,p.y-44,'FURY!','#ff9a5c',18,1.2);
     burst(p.x,p.y,'#ff7a3c',20,260,0.8);
+    playSfx('fury',0.85);
   }
 
   // E - Ground Slam.
@@ -115,6 +118,7 @@ function updateSkeletonAbilities(dt, mx, my){
       shake(12,0.3);
       G.zones.push({x:p.x,y:p.y,r:rad,life:0.5,maxlife:0.5,color:'232,182,76',type:'slam'});
       burst(p.x,p.y,'#e8b64c',26,340,0.7,5);
+      playSfx('groundSlam',1.0);
       for(const e of [...G.enemies]){
         if(dist2(p.x,p.y,e.x,e.y)<(rad+e.r)**2){
           const a = Math.atan2(e.y-p.y,e.x-p.x);
