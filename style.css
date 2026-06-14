@@ -203,11 +203,18 @@
   /* ---------- Talents ---------- */
   #talents .wrap{max-width:860px;text-align:center}
   #talents .cores{font-size:18px;color:var(--void);font-weight:bold;margin-bottom:8px;letter-spacing:1px;text-shadow:0 0 12px #9b59f566}
-  .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}
-  .talent{background:linear-gradient(#241e36,#161020);border:2px solid #4a3a72;border-radius:10px;padding:16px;cursor:pointer;transition:border-color .15s,transform .1s}
+  .tgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:24px 0;align-items:start}
+  .talent-path{position:relative;display:flex;flex-direction:column;gap:18px;padding:12px;border:1px solid rgba(155,89,245,.22);background:rgba(16,12,24,.46);border-radius:8px}
+  .talent-path:before{content:"";position:absolute;left:50%;top:76px;bottom:28px;width:2px;background:linear-gradient(rgba(155,89,245,.08),rgba(155,89,245,.5),rgba(155,89,245,.08));transform:translateX(-50%);pointer-events:none}
+  .talent-path-head{position:relative;z-index:1;padding:8px 8px 10px;border-bottom:1px solid rgba(155,89,245,.24)}
+  .talent-path-head b{display:block;font-family:Impact,'Arial Black';font-size:22px;letter-spacing:2px;color:#e8d8ff;text-transform:uppercase}
+  .talent-path-head span{display:block;margin-top:3px;font-size:11px;line-height:1.4;color:#8e82a8}
+  .talent{position:relative;z-index:1;background:linear-gradient(#241e36,#161020);border:2px solid #4a3a72;border-radius:8px;padding:13px;cursor:pointer;transition:border-color .15s,transform .1s}
   .talent:hover{border-color:var(--void);transform:translateY(-3px)}
   .talent.maxed{border-color:#8a7a3a;background:linear-gradient(#332b16,#201a0c);cursor:default}
   .talent.locked{opacity:.55;cursor:not-allowed}
+  .talent.prereq-locked{opacity:.42;cursor:not-allowed;filter:grayscale(.35)}
+  .talent .tier-label{font-size:10px;color:#695f7c;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px}
   .talent .nm{font-family:Impact;font-size:18px;letter-spacing:1px;color:#e0d0ff}
   .talent.maxed .nm{color:#e8d89a}
   .talent .ds{font-size:12px;color:#9a8fb8;margin:7px 0;line-height:1.5}
@@ -218,6 +225,7 @@
   .reset-talents.disabled{opacity:.38;pointer-events:none;filter:grayscale(.4)}
   .talent-refund{font-size:12px;color:#a996c8;letter-spacing:1px;text-transform:uppercase}
   .hint{color:#8d8270;font-size:13px;margin-top:6px;line-height:1.6}
+  @media(max-width:900px){.tgrid{grid-template-columns:1fr}.talent-path:before{display:none}}
   #gameover .stats, #victory .stats{margin:0 0 10px;font-size:14px;color:#cabfa4;line-height:1.65;text-align:left;letter-spacing:1px}
   #gameover .stats b, #victory .stats b{color:var(--gold);font-family:Impact;font-size:22px;letter-spacing:1px}
   .voiddrop{color:var(--void);font-weight:bold}

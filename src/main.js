@@ -392,21 +392,49 @@ function renderTalents(){
   const resetBtn = $('btnResetTalents');
   if(resetBtn) resetBtn.classList.toggle('disabled', refund<=0);
   const grid = $('tgrid'); grid.innerHTML='';
-  TALENTS.forEach(t=>{
-    const rk = talentRanks[t.id];
-    const d = document.createElement('div');
-    const maxed = rk>=t.max, afford = meta.voidcores>=t.cost;
-    d.className = 'talent' + (maxed?' maxed':(!afford?' locked':''));
-    d.innerHTML = `<div class="nm">${t.ic} ${t.nm}</div><div class="ds">${t.ds}</div>
-      <div class="rk">Rank ${rk} / ${t.max}</div>
-      <div class="cost">${maxed?'MAXED':'Cost: '+t.cost+' ◆'}</div>`;
-    d.onclick = ()=>{
-      if(maxed || !afford) return;
-      meta.voidcores -= t.cost; talentRanks[t.id]++;
-      renderTalents();
-    };
-    grid.appendChild(d);
+  const paths = typeof TALENT_PATHS !== 'undefined' ? TALENT_PATHS : [{id:'core', nm:'Core', ds:''}];
+  paths.forEach(path=>{
+    const col = document.createElement('div');
+    col.className = 'talent-path talent-path-' + path.id;
+    col.innerHTML = `<div class="talent-path-head"><b>${path.nm}</b><span>${path.ds}</span></div>`;
+    TALENTS
+      .filter(t=>(t.path || 'core')===path.id)
+      .sort((a,b)=>(a.tier||1)-(b.tier||1))
+      .forEach(t=>col.appendChild(renderTalentNode(t)));
+    grid.appendChild(col);
   });
+}
+
+function renderTalentNode(t){
+  const rk = talentRanks[t.id] || 0;
+  const d = document.createElement('div');
+  const maxed = rk>=t.max;
+  const afford = meta.voidcores>=t.cost;
+  const unlocked = talentUnlocked(t);
+  d.className = 'talent tier-' + (t.tier || 1) + (maxed?' maxed':'') + (!unlocked?' prereq-locked':(!afford?' locked':''));
+  const req = talentRequirementText(t);
+  d.innerHTML = `<div class="tier-label">Tier ${t.tier || 1}</div>
+    <div class="nm">${t.ic} ${t.nm}</div><div class="ds">${t.ds}</div>
+    <div class="rk">Rank ${rk} / ${t.max}</div>
+    <div class="cost">${maxed?'MAXED':(unlocked?'Cost: '+t.cost+' ◆':req)}</div>`;
+  d.onclick = ()=>{
+    if(maxed || !afford || !unlocked) return;
+    meta.voidcores -= t.cost; talentRanks[t.id]++;
+    renderTalents();
+  };
+  return d;
+}
+
+function talentUnlocked(t){
+  return !t.req || t.req.every(r=>(talentRanks[r.id] || 0) >= r.rank);
+}
+
+function talentRequirementText(t){
+  if(!t.req || !t.req.length) return '';
+  return 'Requires ' + t.req.map(r=>{
+    const def = TALENTS.find(x=>x.id===r.id);
+    return r.rank + ' rank' + (r.rank===1?'':'s') + ' in ' + (def ? def.nm : r.id);
+  }).join(', ');
 }
 
 function talentRefundValue(){
