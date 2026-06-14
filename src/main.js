@@ -535,6 +535,34 @@ function whirlwindTickTime(p){
    AUDIO - dark fantasy weapon SFX
 ========================================================= */
 const audio = { ctx:null, master:null, noise:null };
+const SFX_DEFS = {
+  slash:        { label:'Slash',          category:'combat',      tags:['combat','weapon','melee','skeleton','autoattack'] },
+  cleave:       { label:'Cleave',         category:'combat',      tags:['combat','weapon','melee','skeleton','aoe'] },
+  bladeHit:     { label:'Blade Hit',      category:'combat',      tags:['combat','weapon','hit','impact'] },
+  bladeCrit:    { label:'Blade Crit',     category:'combat',      tags:['combat','weapon','hit','crit','impact'] },
+  whirlwind:    { label:'Whirlwind',      category:'ability',     tags:['ability','skeleton','melee','aoe','wind'] },
+  charge:       { label:'Charge',         category:'ability',     tags:['ability','skeleton','mobility','dash','impact'] },
+  dodge:        { label:'Dodge',          category:'ability',     tags:['ability','mobility','dash'] },
+  fury:         { label:'Battle Fury',    category:'ability',     tags:['ability','skeleton','buff','rage'] },
+  groundSlam:   { label:'Ground Slam',    category:'ability',     tags:['ability','skeleton','aoe','impact','earth'] },
+  slam:         { label:'Slam',           category:'ability',     tags:['ability','aoe','impact','earth'] },
+  curse:        { label:'Curse',          category:'ability',     tags:['ability','warlock','shadow','debuff','aoe'] },
+  sigil:        { label:'Burning Sigil',  category:'ability',     tags:['ability','warlock','fire','zone','aoe'] },
+  boneShield:   { label:'Bone Shield',    category:'ability',     tags:['ability','warlock','defense','bone','orbit'] },
+  shadowStep:   { label:'Shadow Step',    category:'ability',     tags:['ability','warlock','shadow','mobility','blink'] },
+  fistsOfFury:  { label:'Fists of Fury',  category:'ability',     tags:['ability','stickman','monk','melee','flurry','lightning'] },
+  speedBurst:   { label:'Speed Burst',    category:'ability',     tags:['ability','stickman','monk','mobility','dash','lightning'] },
+  magnet:       { label:'Magnet',         category:'pickup',      tags:['pickup','utility','magnet','xp'] },
+  levelUp:      { label:'Level Up',       category:'progression', tags:['progression','level','reward','ui'] },
+  bomb:         { label:'Bomb',           category:'pickup',      tags:['pickup','combat','explosion','aoe','impact'] },
+};
+function getSfxDef(name){
+  return SFX_DEFS[name] || { label:name, category:'uncategorized', tags:['uncategorized'] };
+}
+function sfxHasTag(name, tag){
+  const def = getSfxDef(name);
+  return def.tags.includes(tag) || def.category === tag;
+}
 function unlockAudio(){
   if(audio.ctx){
     if(audio.ctx.state==='suspended') audio.ctx.resume();
