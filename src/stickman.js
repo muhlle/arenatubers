@@ -231,6 +231,38 @@ function drawStickman(p){
     ctx.restore();
   }
 
+  function reachPushWind(alpha){
+    const rng = STICK.fofRange * (p.reach || 1);
+    ctx.save();
+    ctx.translate(lean, -bob);
+    ctx.rotate(p.facing);
+    ctx.globalCompositeOperation='lighter';
+    ctx.globalAlpha=alpha;
+    ctx.filter='blur(6px)';
+    const pulse = 0.78 + Math.sin(t*24)*0.12 + p.fof.flash*0.18;
+    for(let i=0;i<4;i++){
+      const y = (i-1.5)*9 + Math.sin(t*18+i)*2.4;
+      const x0 = 24 + i*5;
+      const x1 = rng*(0.62 + i*0.07);
+      const w0 = 9 + i*1.5;
+      const w1 = 25 - i*2;
+      const grad = ctx.createLinearGradient(x0, y, x1, y);
+      grad.addColorStop(0, 'rgba(95,210,255,0)');
+      grad.addColorStop(0.25, 'rgba(95,210,255,0.34)');
+      grad.addColorStop(0.72, 'rgba(170,245,255,0.50)');
+      grad.addColorStop(1, 'rgba(95,210,255,0)');
+      ctx.fillStyle=grad;
+      ctx.beginPath();
+      ctx.moveTo(x0, y-w0);
+      ctx.bezierCurveTo(rng*0.25, y-w0*1.4, rng*0.52, y-w1*pulse, x1, y-w0*0.25);
+      ctx.bezierCurveTo(rng*0.58, y+w1*pulse, rng*0.28, y+w0*1.35, x0, y+w0);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.filter='none';
+    ctx.restore();
+  }
+
   /* ---------- figure painter (reused for motion-blur ghosts) ---------- */
   const paint = (alpha, tint) => {
     ctx.save();
@@ -397,6 +429,7 @@ function drawStickman(p){
   if(p.iframes>0 && Math.floor(t*16)%2===0) ctx.globalAlpha=0.55;
   paint(1, null);
   ctx.globalAlpha=1;
+  if(flurry) reachPushWind(0.5);
   lightningEdge(flurry ? 0.92 : 0.42);
 
   ctx.restore();
@@ -468,6 +501,28 @@ function _previewStickman(c, t){
   const shY=shoulderY+4;
   if(flurry){
     const clk=t*11, hand=Math.floor(clk)%2===0?1:-1, ext=Math.pow(Math.sin((clk%1)*Math.PI),0.6);
+    c.save();
+    c.translate(0, shY+6);
+    c.globalCompositeOperation='lighter';
+    c.globalAlpha=0.38;
+    c.filter='blur(5px)';
+    for(let i=0;i<3;i++){
+      const y=(i-1)*7+Math.sin(t*18+i)*2;
+      const x0=24+i*4, x1=82+i*12, w0=7+i, w1=18-i*2;
+      const pg=c.createLinearGradient(x0,y,x1,y);
+      pg.addColorStop(0,'rgba(95,210,255,0)');
+      pg.addColorStop(0.35,'rgba(95,210,255,0.28)');
+      pg.addColorStop(0.76,'rgba(180,248,255,0.50)');
+      pg.addColorStop(1,'rgba(95,210,255,0)');
+      c.fillStyle=pg;
+      c.beginPath();
+      c.moveTo(x0,y-w0);
+      c.bezierCurveTo(40,y-w0*1.4,62,y-w1,x1,y-w0*0.25);
+      c.bezierCurveTo(66,y+w1,40,y+w0*1.35,x0,y+w0);
+      c.closePath(); c.fill();
+    }
+    c.filter='none';
+    c.restore();
     for(const s of [1,-1]){
       const out=(s===hand)?ext:0.2;
       const dir=-0.15; // punch toward viewer-right
